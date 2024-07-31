@@ -11,15 +11,15 @@ public class Product {
     protected Long id;
     protected Long storeId;
     protected Long version;
-    protected String name;
-    protected String description;
-    protected Price price;
+    protected ProductDetails productDetails;
     protected Integer availableStock;
     protected Long unitsSold;
 
-    public void buy() {
+    public ProductDetails buy(Integer quantity) {
         version += 1;
-        availableStock -= 1;
-        unitsSold += 1;
+        availableStock -= quantity;
+        unitsSold += quantity;
+
+        return productDetails;
     }
 }
