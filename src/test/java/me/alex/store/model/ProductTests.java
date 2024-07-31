@@ -4,8 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static me.alex.store.TestData.randomProduct;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductTests {
 
@@ -21,5 +20,16 @@ class ProductTests {
                 () -> assertEquals(product.getAvailableStock(), randomProduct().getAvailableStock() - buyQuantity),
                 () -> assertEquals(product.getUnitsSold(), randomProduct().getUnitsSold() + buyQuantity)
         );
+    }
+
+    @Test
+    @DisplayName("Buying an exceeding quantity throws an exception")
+    void buyExceedingQuantity() {
+        var product = randomProduct();
+        var buyQuantity = randomProduct().getAvailableStock() + 1;
+
+        assertThrows(IllegalStateException.class, () -> {
+            product.buy(buyQuantity);
+        });
     }
 }

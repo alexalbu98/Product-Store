@@ -16,6 +16,10 @@ public class Product {
     protected Long unitsSold;
 
     public ProductDetails buy(Integer quantity) {
+        if (availableStock - quantity < 0) {
+            throw new IllegalStateException("Stock is too low for this purchase.");
+        }
+
         version += 1;
         availableStock -= quantity;
         unitsSold += quantity;
