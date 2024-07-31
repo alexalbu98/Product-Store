@@ -10,9 +10,10 @@ class ProductTests {
 
     @Test
     @DisplayName("When a product is bought all the necessary data is updated.")
-    void testProductBuy() {
+    void buyProduct() {
         var product = randomProduct();
         var buyQuantity = 3;
+
         product.buy(buyQuantity);
 
         assertAll(
@@ -31,5 +32,19 @@ class ProductTests {
         assertThrows(IllegalStateException.class, () -> {
             product.buy(buyQuantity);
         });
+    }
+
+    @Test
+    @DisplayName("Increase stock updates product version")
+    void increaseStock() {
+        var product = randomProduct();
+        var buyQuantity = 4;
+
+        product.buy(buyQuantity);
+
+        assertAll(
+                () -> assertEquals(product.getVersion(), randomProduct().getVersion() + 1),
+                () -> assertEquals(product.getAvailableStock(), randomProduct().getAvailableStock() - buyQuantity)
+        );
     }
 }
