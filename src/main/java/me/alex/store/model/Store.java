@@ -14,8 +14,19 @@ import java.util.Optional;
 @AllArgsConstructor
 public class Store {
     private Long id;
+    private StoreDescription storeDescription;
     @Getter(AccessLevel.NONE)
     private List<Long> products;
+    @Getter(AccessLevel.NONE)
+    private List<Long> admins;
+
+    public void addAdmin(Long admin) {
+        admins.add(admin);
+    }
+
+    public void deleteAdmin(Long admin) {
+        admins.remove(admin);
+    }
 
     public void addProduct(Long product) {
         products.add(product);
@@ -34,7 +45,6 @@ public class Store {
         return products.stream()
                 .filter(p -> p.equals(productId))
                 .findFirst();
-
     }
 
 }
