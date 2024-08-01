@@ -20,9 +20,9 @@ public class ProductDto {
     @NotNull
     private Integer availableStock;
     @NotNull
-    private Integer unit;
+    private Integer priceUnit;
     @NotNull
-    private Integer subUnit;
+    private Integer priceSubUnit;
     @NotBlank
-    private String currency;
+    private String priceCurrency;
 }

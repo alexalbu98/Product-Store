@@ -8,6 +8,7 @@ import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
+import me.alex.store.rest.dto.ProductDto;
 import me.alex.store.rest.dto.StoreDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class StoreService {
 
         return storeRepository.findAllByUserRef(user.getId())
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToStoreDto)
                 .toList();
     }
 
@@ -52,14 +53,23 @@ public class StoreService {
             throw new IllegalStateException("User cannot modify this store.");
         }
 
+        if (productRepository.existsByNameInStore(product.getProductDetails().getName(), product.getStoreRef())) {
+            throw new IllegalStateException("Product name already exists in this store");
+        }
+
         productRepository.save(product);
     }
 
     public List<StoreDto> findAll() {
         return storeRepository.findAll()
                 .stream()
-                .map(this::convertToDto)
+                .map(this::convertToStoreDto)
                 .toList();
+    }
+
+    public List<ProductDto> findAllProducts(Long storeId) {
+        return productRepository.findAllByStoreRef(storeId)
+                .stream().map(this::convertToProductDto).toList();
     }
 
     private User findUser(String username) {
@@ -67,10 +77,20 @@ public class StoreService {
                 .orElseThrow(() -> new IllegalStateException("Username does not exist."));
     }
 
-    private StoreDto convertToDto(Store store) {
+    private StoreDto convertToStoreDto(Store store) {
         return new StoreDto(store.getId(),
                 store.getStoreDetails().getName(),
                 store.getStoreDetails().getDescription(),
                 store.getStoreDetails().getAddress().toString());
+    }
+
+    private ProductDto convertToProductDto(Product product) {
+        return new ProductDto(product.getStoreRef(),
+                product.getProductDetails().getName(),
+                product.getProductDetails().getDescription(),
+                product.getAvailableStock(),
+                product.getProductDetails().getPrice().getUnit(),
+                product.getProductDetails().getPrice().getSubUnit(),
+                product.getProductDetails().getPrice().getCurrency());
     }
 }

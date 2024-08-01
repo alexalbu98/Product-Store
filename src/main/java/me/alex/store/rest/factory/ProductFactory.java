@@ -15,9 +15,9 @@ public class ProductFactory {
                 dto.getStoreId(),
                 new ProductDetails(dto.getName(),
                         dto.getDescription(),
-                        new Price(dto.getUnit(),
-                                dto.getSubUnit(),
-                                dto.getCurrency())),
+                        new Price(dto.getPriceUnit(),
+                                dto.getPriceSubUnit(),
+                                dto.getPriceCurrency())),
                 dto.getAvailableStock(),
                 0L);
     }

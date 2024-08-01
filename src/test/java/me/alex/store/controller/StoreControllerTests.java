@@ -106,6 +106,34 @@ class StoreControllerTests extends AbstractPostgresTest {
                 "EURO");
 
         addProduct(owner, productDto);
+
+        var products = getAllProductsInStore(store.getId());
+        assertEquals(1, products.length);
+    }
+
+    @Test
+    @DisplayName("Add product with same name returns bad request.")
+    void same_name_product() throws Exception {
+        String owner = createUser();
+        createStore(owner, "store");
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        var store = storeDetails[0];
+        var productDto = new ProductDto(store.getId(),
+                "product",
+                "description",
+                10,
+                10,
+                10,
+                "EURO");
+
+        addProduct(owner, productDto);
+
+        String sameNameProduct = objectMapper.writeValueAsString(productDto);
+        mvc.perform(post("/store/product")
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+                        .content(sameNameProduct)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     private String createUser() {
@@ -152,6 +180,15 @@ class StoreControllerTests extends AbstractPostgresTest {
                 .andReturn();
 
         return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
+    }
+
+    private ProductDto[] getAllProductsInStore(Long storeId) throws Exception {
+        MvcResult mvcResult = mvc.perform(get("/store/" + storeId + "/product")
+                        .with(user("client").password("test").roles(UserRole.CLIENT.name())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProductDto[].class);
     }
 
 }

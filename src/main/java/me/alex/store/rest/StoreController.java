@@ -27,6 +27,16 @@ public class StoreController {
         return "Store created successfully";
     }
 
+    @GetMapping
+    public List<StoreDto> findStoresOwnedByPrincipal(Principal principal) {
+        return storeService.findStores(principal.getName());
+    }
+
+    @GetMapping("/all")
+    public List<StoreDto> findAllStores() {
+        return storeService.findAll();
+    }
+
     @PostMapping(value = "/product", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String addProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
         var product = productFactory.fromDto(productDto);
@@ -35,13 +45,8 @@ public class StoreController {
         return "Product add to store successfully.";
     }
 
-    @GetMapping
-    public List<StoreDto> findStores(Principal principal) {
-        return storeService.findStores(principal.getName());
-    }
-
-    @GetMapping("/all")
-    public List<StoreDto> findAll() {
-        return storeService.findAll();
+    @GetMapping("{storeId}/product")
+    public List<ProductDto> findStoreProducts(@PathVariable Long storeId) {
+        return storeService.findAllProducts(storeId);
     }
 }
