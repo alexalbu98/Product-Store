@@ -1,6 +1,5 @@
 package me.alex.store;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -10,7 +9,8 @@ public abstract class AbstractPostgresTest {
     private final static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:latest")
             .withDatabaseName("store-db")
             .withUsername("sa")
-            .withPassword("sa");
+            .withPassword("sa")
+            .withReuse(true);
 
     @BeforeAll
     public static void startPostgresContainer() {
@@ -18,9 +18,4 @@ public abstract class AbstractPostgresTest {
         container.start();
     }
 
-    @AfterAll
-    public static void stopPostgresContainer() {
-        container.stop();
-        container.close();
-    }
 }
