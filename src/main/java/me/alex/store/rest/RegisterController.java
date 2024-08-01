@@ -28,7 +28,7 @@ public class RegisterController {
     }
 
     @PostMapping("/owner")
-    public String registerOwner(@Valid UserDto userDto) {
+    public String registerOwner(@Valid @RequestBody UserDto userDto) {
         var user = userFactory.fromDto(userDto, UserRole.OWNER);
         userRepository.save(user);
 

@@ -30,4 +30,10 @@ public class ErrorHandlingAdvice {
         });
         return errors;
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    protected String handleUncaughtException(Exception ex) {
+        return "Internal server error";
+    }
 }

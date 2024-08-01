@@ -1,8 +1,10 @@
 package me.alex.store.controller;
 
 import me.alex.store.AbstractPostgresTest;
+import me.alex.store.core.model.UserRole;
 import me.alex.store.core.repository.UserRepository;
 import me.alex.store.rest.dto.UserDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,9 +32,10 @@ class RegisterControllerTests extends AbstractPostgresTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
+    @DisplayName("Insert a new user with client role.")
     void create_client() throws Exception {
-        var dto = new UserDto("test", "test", "test", "test");
-        var body = objectMapper.writeValueAsString(dto);
+        var validDto = new UserDto("test", "test", "test", "test");
+        var body = objectMapper.writeValueAsString(validDto);
 
         mvc.perform(post("/register/client")
                         .content(body)
@@ -41,5 +44,22 @@ class RegisterControllerTests extends AbstractPostgresTest {
 
         var users = userRepository.findAll();
         assertEquals(1, users.size());
+        assertEquals(UserRole.CLIENT, users.get(0).getUserRole());
+    }
+
+    @Test
+    @DisplayName("Insert a new user with owner role.")
+    void create_owner() throws Exception {
+        var validDto = new UserDto("test", "test", "test", "test");
+        var body = objectMapper.writeValueAsString(validDto);
+
+        mvc.perform(post("/register/owner")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        var users = userRepository.findAll();
+        assertEquals(1, users.size());
+        assertEquals(UserRole.OWNER, users.get(0).getUserRole());
     }
 }
