@@ -1,19 +1,17 @@
 package me.alex.store;
 
-import me.alex.store.model.Price;
-import me.alex.store.model.Product;
-import me.alex.store.model.ProductDetails;
-
-import java.util.UUID;
+import me.alex.store.core.model.Price;
+import me.alex.store.core.model.Product;
+import me.alex.store.core.model.ProductDetails;
 
 public class TestData {
-    public static Product randomProduct() {
+    public static Product testProduct() {
         return new Product(null,
                 null,
                 1L,
                 new ProductDetails(
-                        UUID.randomUUID().toString(),
-                        UUID.randomUUID().toString(),
+                        "Test product",
+                        "Test description",
                         new Price(10, 10, "EURO")
                 ),
                 10,

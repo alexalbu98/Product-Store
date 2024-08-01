@@ -1,4 +1,4 @@
-package me.alex.store.model;
+package me.alex.store.core.model;
 
 import lombok.Value;
 

@@ -1,9 +1,10 @@
 package me.alex.store.model;
 
+import me.alex.store.core.model.BuyOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static me.alex.store.TestData.randomProduct;
+import static me.alex.store.TestData.testProduct;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductTests {
@@ -11,23 +12,24 @@ class ProductTests {
     @Test
     @DisplayName("When a product is bought all the necessary data is updated.")
     void buyProduct() {
-        var product = randomProduct();
+        var product = testProduct();
         var buyQuantity = 3;
 
-        product.buy(buyQuantity);
+        BuyOrder buyOrder = product.buy(buyQuantity);
 
         assertAll(
-                () -> assertEquals(product.getVersion(), randomProduct().getVersion() + 1),
-                () -> assertEquals(product.getAvailableStock(), randomProduct().getAvailableStock() - buyQuantity),
-                () -> assertEquals(product.getUnitsSold(), randomProduct().getUnitsSold() + buyQuantity)
+                () -> assertEquals(buyOrder.getQuantity(), buyQuantity),
+                () -> assertEquals(buyOrder.getProductDetails(), testProduct().getProductDetails()),
+                () -> assertEquals(product.getAvailableStock(), testProduct().getAvailableStock() - buyQuantity),
+                () -> assertEquals(product.getUnitsSold(), testProduct().getUnitsSold() + buyQuantity)
         );
     }
 
     @Test
     @DisplayName("Buying an exceeding quantity throws an exception")
     void buyExceedingQuantity() {
-        var product = randomProduct();
-        var buyQuantity = randomProduct().getAvailableStock() + 1;
+        var product = testProduct();
+        var buyQuantity = testProduct().getAvailableStock() + 1;
 
         assertThrows(IllegalStateException.class, () -> {
             product.buy(buyQuantity);
@@ -37,14 +39,13 @@ class ProductTests {
     @Test
     @DisplayName("Increase stock updates product version")
     void increaseStock() {
-        var product = randomProduct();
-        var buyQuantity = 4;
+        var product = testProduct();
+        var increaseByAmount = 4;
 
-        product.buy(buyQuantity);
+        product.increaseStock(increaseByAmount);
 
         assertAll(
-                () -> assertEquals(product.getVersion(), randomProduct().getVersion() + 1),
-                () -> assertEquals(product.getAvailableStock(), randomProduct().getAvailableStock() - buyQuantity)
+                () -> assertEquals(product.getAvailableStock(), testProduct().getAvailableStock() + increaseByAmount)
         );
     }
 }

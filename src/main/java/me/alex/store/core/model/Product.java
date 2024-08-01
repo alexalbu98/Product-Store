@@ -1,34 +1,40 @@
-package me.alex.store.model;
+package me.alex.store.core.model;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Embedded;
+
+import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.USE_EMPTY;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
+    @Id
     @Setter(AccessLevel.NONE)
     protected Long id;
-    protected Long storeId;
+    @Version
     protected Long version;
+    protected Long storeRef;
+    @Embedded(onEmpty = USE_EMPTY)
     protected ProductDetails productDetails;
     protected Integer availableStock;
     protected Long unitsSold;
 
     public void increaseStock(Integer quantity) {
-        version += 1;
         availableStock += quantity;
     }
 
-    public ProductDetails buy(Integer quantity) {
+    public BuyOrder buy(Integer quantity) {
         if (availableStock - quantity < 0) {
             throw new IllegalStateException("Stock is too low for this purchase.");
         }
 
-        version += 1;
         availableStock -= quantity;
         unitsSold += quantity;
 
-        return productDetails;
+        return new BuyOrder(productDetails, quantity);
     }
 }
