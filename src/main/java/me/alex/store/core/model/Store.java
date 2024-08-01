@@ -12,7 +12,7 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 @AllArgsConstructor
 public class Store {
     @Id
-    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Long id;
     @Embedded(onEmpty = USE_EMPTY)
     private StoreDescription storeDescription;

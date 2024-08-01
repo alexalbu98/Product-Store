@@ -1,8 +1,6 @@
 package me.alex.store;
 
-import me.alex.store.core.model.Price;
-import me.alex.store.core.model.Product;
-import me.alex.store.core.model.ProductDetails;
+import me.alex.store.core.model.*;
 
 public class TestData {
     public static Product testProduct() {
@@ -17,5 +15,11 @@ public class TestData {
                 10,
                 0L
         );
+    }
+
+    public static Store testStore() {
+        return new Store(null,
+                new StoreDescription("test store", "description",
+                        new Address("test", "test", "test", "test")));
     }
 }

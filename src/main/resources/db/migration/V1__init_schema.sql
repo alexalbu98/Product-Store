@@ -5,7 +5,7 @@ CREATE TABLE store (
     address_country VARCHAR(255),
     address_city VARCHAR(255),
     address_street VARCHAR(255),
-    address_zipcode VARCHAR(255)
+    address_zip_code VARCHAR(255)
 );
 
 CREATE TABLE product (
