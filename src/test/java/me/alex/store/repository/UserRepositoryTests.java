@@ -30,8 +30,23 @@ class UserRepositoryTests extends AbstractPostgresTest {
         var user = userRepository.save(testStoreOwnerUser());
         var found = userRepository.findById(user.getId());
 
-        assertTrue(found.isPresent());
-        assertEquals(user.getId(), found.get().getId());
-        assertEquals(user.getUserRole(), found.get().getUserRole());
+        assertAll(
+                () -> assertTrue(found.isPresent()),
+                () -> assertEquals(user.getId(), found.get().getId()),
+                () -> assertEquals(user.getUserRole(), found.get().getUserRole())
+        );
+    }
+
+    @Test
+    @DisplayName("Retrieve inserted user by username.")
+    void find_by_username() {
+        var user = userRepository.save(testStoreOwnerUser());
+        var found = userRepository.findByUsername(user.getUsername());
+
+        assertAll(
+                () -> assertTrue(found.isPresent()),
+                () -> assertEquals(user.getId(), found.get().getId()),
+                () -> assertEquals(user.getUserRole(), found.get().getUserRole())
+        );
     }
 }
