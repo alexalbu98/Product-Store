@@ -50,6 +50,17 @@ class StoreRepositoryTests extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("Check name already exists for store.")
+    void name_already_exists() {
+        var userId = userRepository.save(testStoreOwnerUser()).getId();
+        var inserted = storeRepository.save(testStore(userId));
+
+        var exists = storeRepository.existsByName(inserted.getStoreDetails().getName());
+
+        assertTrue(exists);
+    }
+
+    @Test
     @DisplayName("On update version is incremented.")
     void version_is_incremented() {
         var userId = userRepository.save(testStoreOwnerUser()).getId();
