@@ -1,6 +1,8 @@
 package me.alex.store.core.model;
 
 import lombok.*;
+import me.alex.store.core.model.value.BuyOrder;
+import me.alex.store.core.model.value.ProductDetails;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Embedded;

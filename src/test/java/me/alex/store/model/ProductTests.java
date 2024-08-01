@@ -1,6 +1,6 @@
 package me.alex.store.model;
 
-import me.alex.store.core.model.BuyOrder;
+import me.alex.store.core.model.value.BuyOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

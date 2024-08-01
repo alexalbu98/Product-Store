@@ -1,6 +1,7 @@
 package me.alex.store.core.model;
 
 import lombok.*;
+import me.alex.store.core.model.value.StoreDescription;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
 

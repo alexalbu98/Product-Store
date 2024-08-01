@@ -1,6 +1,10 @@
 package me.alex.store;
 
 import me.alex.store.core.model.*;
+import me.alex.store.core.model.value.Address;
+import me.alex.store.core.model.value.Price;
+import me.alex.store.core.model.value.ProductDetails;
+import me.alex.store.core.model.value.StoreDescription;
 
 public class TestData {
     public static Product testProduct() {

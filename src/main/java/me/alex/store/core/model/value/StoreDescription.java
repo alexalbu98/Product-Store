@@ -1,4 +1,4 @@
-package me.alex.store.core.model;
+package me.alex.store.core.model.value;
 
 import lombok.Value;
 import org.springframework.data.relational.core.mapping.Embedded;
