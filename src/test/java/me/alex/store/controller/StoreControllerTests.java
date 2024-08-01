@@ -6,6 +6,7 @@ import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
+import me.alex.store.rest.dto.ProductDto;
 import me.alex.store.rest.dto.StoreDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,6 +90,24 @@ class StoreControllerTests extends AbstractPostgresTest {
         assertEquals(2, storeDetails.length);
     }
 
+    @Test
+    @DisplayName("Store owner can add product.")
+    void can_add_product() throws Exception {
+        String owner = createUser();
+        createStore(owner, "store");
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        var store = storeDetails[0];
+        var productDto = new ProductDto(store.getId(),
+                "product",
+                "description",
+                10,
+                10,
+                10,
+                "EURO");
+
+        addProduct(owner, productDto);
+    }
+
     private String createUser() {
         var user = testStoreOwnerUser();
         userRepository.save(user);
@@ -101,6 +120,16 @@ class StoreControllerTests extends AbstractPostgresTest {
         var body = objectMapper.writeValueAsString(validStoreDetails);
 
         mvc.perform(post("/store")
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    private void addProduct(String owner, ProductDto productDto) throws Exception {
+        var body = objectMapper.writeValueAsString(productDto);
+
+        mvc.perform(post("/store/product")
                         .with(user(owner).password("test").roles(UserRole.OWNER.name()))
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON))

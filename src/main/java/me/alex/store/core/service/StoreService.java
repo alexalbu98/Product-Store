@@ -1,7 +1,9 @@
 package me.alex.store.core.service;
 
 import lombok.RequiredArgsConstructor;
+import me.alex.store.core.model.Product;
 import me.alex.store.core.model.Store;
+import me.alex.store.core.model.User;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
@@ -21,8 +23,7 @@ public class StoreService {
     private final UserRepository userRepository;
 
     public void createProductStore(String username, StoreDetails storeDetails) {
-        var user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("Username does not exist."));
+        var user = findUser(username);
 
         if (storeRepository.existsByName(storeDetails.getName())) {
             throw new IllegalStateException("Store name already exists.");
@@ -32,27 +33,44 @@ public class StoreService {
     }
 
     public List<StoreDto> findStores(String username) {
-        var user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("Username does not exist."));
+        var user = findUser(username);
 
         return storeRepository.findAllByUserRef(user.getId())
                 .stream()
-                .map(Store::getStoreDetails)
                 .map(this::convertToDto)
                 .toList();
+    }
+
+    public void addProduct(String username, Product product) {
+        var user = findUser(username);
+
+        boolean canEditStore = storeRepository.findAllByUserRef(user.getId())
+                .stream().map(Store::getId)
+                .anyMatch(storeId -> storeId.equals(product.getStoreRef()));
+
+        if (!canEditStore) {
+            throw new IllegalStateException("User cannot modify this store.");
+        }
+
+        productRepository.save(product);
     }
 
     public List<StoreDto> findAll() {
         return storeRepository.findAll()
                 .stream()
-                .map(Store::getStoreDetails)
                 .map(this::convertToDto)
                 .toList();
     }
 
-    private StoreDto convertToDto(StoreDetails storeDetails) {
-        return new StoreDto(storeDetails.getName(),
-                storeDetails.getDescription(),
-                storeDetails.getAddress().toString());
+    private User findUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("Username does not exist."));
+    }
+
+    private StoreDto convertToDto(Store store) {
+        return new StoreDto(store.getId(),
+                store.getStoreDetails().getName(),
+                store.getStoreDetails().getDescription(),
+                store.getStoreDetails().getAddress().toString());
     }
 }
