@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +46,7 @@ class RegisterControllerTests extends AbstractPostgresTest {
         var users = userRepository.findAll();
         assertEquals(1, users.size());
         assertEquals(UserRole.CLIENT, users.get(0).getUserRole());
+        assertNotEquals(validDto.getPassword(), users.get(0).getPassword());
     }
 
     @Test
@@ -61,6 +63,7 @@ class RegisterControllerTests extends AbstractPostgresTest {
         var users = userRepository.findAll();
         assertEquals(1, users.size());
         assertEquals(UserRole.OWNER, users.get(0).getUserRole());
+        assertNotEquals(validDto.getPassword(), users.get(0).getPassword());
     }
 
     @Test
