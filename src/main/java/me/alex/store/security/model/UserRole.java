@@ -1,4 +1,4 @@
-package me.alex.store.core.model;
+package me.alex.store.security.model;
 
 public enum UserRole {
     OWNER, CLIENT

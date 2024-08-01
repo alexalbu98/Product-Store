@@ -1,6 +1,6 @@
-package me.alex.store.core.repository;
+package me.alex.store.security.repository;
 
-import me.alex.store.core.model.User;
+import me.alex.store.security.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
