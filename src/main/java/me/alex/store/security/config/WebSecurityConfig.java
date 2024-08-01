@@ -50,8 +50,8 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register/**").permitAll()
-                        .requestMatchers("/store/**").hasRole(UserRole.OWNER.name())
                         .requestMatchers(HttpMethod.GET, "/store/**").hasRole(UserRole.CLIENT.name())
+                        .requestMatchers("/store/**").hasRole(UserRole.OWNER.name())
                         .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)

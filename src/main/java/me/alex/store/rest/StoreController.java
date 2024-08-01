@@ -13,11 +13,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/store", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/store")
 public class StoreController {
     private final StoreService storeService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String createStore(Principal principal, @RequestBody @Valid StoreDetails storeDetails) {
         storeService.createProductStore(principal.getName(), storeDetails);
 
@@ -27,5 +27,10 @@ public class StoreController {
     @GetMapping
     public List<StoreDto> findStores(Principal principal) {
         return storeService.findStores(principal.getName());
+    }
+
+    @GetMapping("/all")
+    public List<StoreDto> findAll() {
+        return storeService.findAll();
     }
 }

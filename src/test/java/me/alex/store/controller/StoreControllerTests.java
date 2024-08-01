@@ -77,6 +77,18 @@ class StoreControllerTests extends AbstractPostgresTest {
         assertEquals(2, storeDetails.length);
     }
 
+    @Test
+    @DisplayName("Clients can see all the stores.")
+    void show_all_stores() throws Exception {
+        String owner = createUser();
+
+        createStore(owner, "first");
+        createStore(owner, "second");
+
+        StoreDto[] storeDetails = getAllStores();
+        assertEquals(2, storeDetails.length);
+    }
+
     private String createUser() {
         var user = testStoreOwnerUser();
         userRepository.save(user);
@@ -97,8 +109,16 @@ class StoreControllerTests extends AbstractPostgresTest {
 
     private StoreDto[] getStoresOwnedByUser(String owner) throws Exception {
         MvcResult mvcResult = mvc.perform(get("/store")
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
+    }
+
+    private StoreDto[] getAllStores() throws Exception {
+        MvcResult mvcResult = mvc.perform(get("/store/all")
+                        .with(user("client").password("test").roles(UserRole.CLIENT.name())))
                 .andExpect(status().isOk())
                 .andReturn();
 

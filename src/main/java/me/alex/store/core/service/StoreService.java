@@ -38,7 +38,21 @@ public class StoreService {
         return storeRepository.findAllByUserRef(user.getId())
                 .stream()
                 .map(Store::getStoreDetails)
-                .map(d -> new StoreDto(d.getName(), d.getDescription(), d.getAddress().toString()))
+                .map(this::convertToDto)
                 .toList();
+    }
+
+    public List<StoreDto> findAll() {
+        return storeRepository.findAll()
+                .stream()
+                .map(Store::getStoreDetails)
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    private StoreDto convertToDto(StoreDetails storeDetails) {
+        return new StoreDto(storeDetails.getName(),
+                storeDetails.getDescription(),
+                storeDetails.getAddress().toString());
     }
 }
