@@ -4,7 +4,9 @@ import me.alex.store.AbstractPostgresTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.StoreDetails;
+import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
+import me.alex.store.rest.dto.StoreDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static me.alex.store.TestData.testStoreOwnerUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,21 +35,20 @@ class StoreControllerTests extends AbstractPostgresTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    StoreRepository storeRepository;
+
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
+    @DisplayName("Owner can create a new store.")
     void create_store() throws Exception {
         String user = createUser();
 
-        var validStoreDetails = new StoreDetails("test", "test",
-                new Address("test", "test", "test", "test"));
-        var body = objectMapper.writeValueAsString(validStoreDetails);
+        createStore(user, "test");
 
-        mvc.perform(post("/store")
-                        .with(user(user).password("test").roles(UserRole.OWNER.name()))
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        var stores = storeRepository.findAll();
+        assertEquals(1, stores.size());
     }
 
     @Test
@@ -61,9 +65,44 @@ class StoreControllerTests extends AbstractPostgresTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    @DisplayName("Owner can see his stores.")
+    void owner_can_see_stores() throws Exception {
+        String owner = createUser();
+
+        createStore(owner, "first");
+        createStore(owner, "second");
+
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        assertEquals(2, storeDetails.length);
+    }
+
     private String createUser() {
         var user = testStoreOwnerUser();
         userRepository.save(user);
         return user.getUsername();
     }
+
+    private void createStore(String owner, String storeName) throws Exception {
+        var validStoreDetails = new StoreDetails(storeName, "test",
+                new Address("test", "test", "test", "test"));
+        var body = objectMapper.writeValueAsString(validStoreDetails);
+
+        mvc.perform(post("/store")
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    private StoreDto[] getStoresOwnedByUser(String owner) throws Exception {
+        MvcResult mvcResult = mvc.perform(get("/store")
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
+    }
+
 }

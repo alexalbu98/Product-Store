@@ -4,13 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.service.StoreService;
+import me.alex.store.rest.dto.StoreDto;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +22,10 @@ public class StoreController {
         storeService.createProductStore(principal.getName(), storeDetails);
 
         return "Store created successfully";
+    }
+
+    @GetMapping
+    public List<StoreDto> findStores(Principal principal) {
+        return storeService.findStores(principal.getName());
     }
 }
