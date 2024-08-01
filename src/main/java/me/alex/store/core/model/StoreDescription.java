@@ -9,6 +9,6 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 public class StoreDescription {
     String name;
     String description;
-    @Embedded(onEmpty = USE_EMPTY)
+    @Embedded(onEmpty = USE_EMPTY, prefix = "address")
     Address address;
 }

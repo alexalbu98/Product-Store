@@ -9,6 +9,6 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 public class ProductDetails {
     String name;
     String description;
-    @Embedded(onEmpty = USE_EMPTY)
+    @Embedded(onEmpty = USE_EMPTY, prefix = "price")
     Price price;
 }

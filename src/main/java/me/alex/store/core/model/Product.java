@@ -16,7 +16,8 @@ public class Product {
     @Setter(AccessLevel.NONE)
     protected Long id;
     @Version
-    protected Long version;
+    @Setter(AccessLevel.NONE)
+    protected Long version = 0L;
     protected Long storeRef;
     @Embedded(onEmpty = USE_EMPTY)
     protected ProductDetails productDetails;
