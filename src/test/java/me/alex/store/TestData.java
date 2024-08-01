@@ -2,6 +2,8 @@ package me.alex.store;
 
 import me.alex.store.core.model.Product;
 import me.alex.store.core.model.Store;
+import me.alex.store.core.model.User;
+import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.Price;
 import me.alex.store.core.model.value.ProductDetails;
@@ -22,9 +24,30 @@ public class TestData {
         );
     }
 
-    public static Store testStore() {
+    public static User testClientUser() {
+        return new User(null,
+                "test user",
+                "test user",
+                UserRole.CLIENT,
+                "email",
+                "phone"
+        );
+    }
+
+    public static User testStoreOwnerUser() {
+        return new User(null,
+                "test user",
+                "test user",
+                UserRole.OWNER,
+                "email",
+                "phone"
+        );
+    }
+
+    public static Store testStore(Long userRef) {
         return new Store(null,
                 null,
+                userRef,
                 new StoreDetails("test store", "description",
                         new Address("test", "test", "test", "test")));
     }

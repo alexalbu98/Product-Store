@@ -6,6 +6,7 @@ import me.alex.store.core.model.value.ProductDetails;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.Table;
 
 import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.USE_EMPTY;
 
@@ -13,6 +14,7 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table("products")
 public class Product {
     @Id
     @Setter(AccessLevel.NONE)

@@ -3,14 +3,14 @@ package me.alex.store.repository;
 import me.alex.store.AbstractPostgresTest;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
+import me.alex.store.core.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static me.alex.store.TestData.testProduct;
-import static me.alex.store.TestData.testStore;
+import static me.alex.store.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
@@ -22,6 +22,9 @@ class ProductRepositoryTests extends AbstractPostgresTest {
 
     @Autowired
     StoreRepository storeRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     @DisplayName("Insert new product in database.")
@@ -55,7 +58,8 @@ class ProductRepositoryTests extends AbstractPostgresTest {
     }
 
     private Long insertNewStore() {
-        return storeRepository.save(testStore()).getId();
+        Long userId = userRepository.save(testStoreOwnerUser()).getId();
+        return storeRepository.save(testStore(userId)).getId();
     }
 
     @Test
