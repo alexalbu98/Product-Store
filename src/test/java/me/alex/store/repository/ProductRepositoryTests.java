@@ -3,7 +3,7 @@ package me.alex.store.repository;
 import me.alex.store.AbstractPostgresTest;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
-import me.alex.store.security.repository.UserRepository;
+import me.alex.store.core.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

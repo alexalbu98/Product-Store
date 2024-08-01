@@ -1,7 +1,7 @@
 package me.alex.store.security.service;
 
 import lombok.RequiredArgsConstructor;
-import me.alex.store.security.repository.UserRepository;
+import me.alex.store.core.repository.UserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
