@@ -1,5 +1,6 @@
 CREATE TABLE store (
     id SERIAL PRIMARY KEY,
+    version BIGINT,
     name VARCHAR(255),
     description TEXT,
     address_country VARCHAR(255),

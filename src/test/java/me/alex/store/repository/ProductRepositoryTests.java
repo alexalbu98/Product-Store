@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static me.alex.store.TestData.testProduct;
 import static me.alex.store.TestData.testStore;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @SpringBootTest
@@ -33,7 +32,10 @@ class ProductRepositoryTests extends AbstractPostgresTest {
 
         var saved = productRepository.save(product);
 
-        assertNotNull(saved.getId());
+        assertAll(
+                () -> assertNotNull(saved.getId()),
+                () -> assertNotNull(saved.getVersion())
+        );
     }
 
     @Test
@@ -54,5 +56,19 @@ class ProductRepositoryTests extends AbstractPostgresTest {
 
     private Long insertNewStore() {
         return storeRepository.save(testStore()).getId();
+    }
+
+    @Test
+    @DisplayName("On update version is incremented.")
+    void version_is_incremented() {
+        var storeId = insertNewStore();
+        var product = testProduct();
+        product.setStoreRef(storeId);
+
+        var savedProduct = productRepository.save(product);
+        savedProduct.increaseStock(10);
+        var updated = productRepository.save(savedProduct);
+
+        assertEquals(1, updated.getVersion());
     }
 }
