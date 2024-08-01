@@ -1,6 +1,6 @@
 CREATE TABLE store (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
     description TEXT,
     address_country VARCHAR(255),
     address_city VARCHAR(255),
@@ -10,20 +10,14 @@ CREATE TABLE store (
 
 CREATE TABLE product (
     id SERIAL PRIMARY KEY,
-    version BIGINT NOT NULL,
-    store_id BIGINT NOT NULL,
+    version BIGINT,
+    store_id BIGINT,
     available_stock INT,
     units_sold BIGINT,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
     description TEXT,
-    price_unit INT NOT NULL,
-    price_subunit INT NOT NULL,
-    price_currency VARCHAR(255) NOT NULL,
+    price_unit INT,
+    price_subunit INT,
+    price_currency VARCHAR(255),
     FOREIGN KEY (store_id) REFERENCES store(id)
 );
-
-ALTER TABLE store
-ADD CONSTRAINT unique_store_name UNIQUE (name);
-
-ALTER TABLE product
-ADD CONSTRAINT unique_product_name UNIQUE (name);

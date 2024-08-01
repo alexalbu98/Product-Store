@@ -1,6 +1,7 @@
 package me.alex.store.repository;
 
 import me.alex.store.AbstractPostgresTest;
+import me.alex.store.core.model.StoreDescription;
 import me.alex.store.core.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,4 +37,5 @@ class StoreRepositoryTests extends AbstractPostgresTest {
                 () -> assertEquals(found.get().getId(), inserted.getId())
         );
     }
+
 }
