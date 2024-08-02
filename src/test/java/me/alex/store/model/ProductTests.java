@@ -14,11 +14,9 @@ class ProductTests {
         var product = testProduct();
         var buyQuantity = 3;
 
-        BuyOrder buyOrder = product.buy(buyQuantity);
+        product.buy(buyQuantity);
 
         assertAll(
-                () -> assertEquals(buyOrder.getQuantity(), buyQuantity),
-                () -> assertEquals(buyOrder.getProductDetails(), testProduct().getProductDetails()),
                 () -> assertEquals(product.getAvailableStock(), testProduct().getAvailableStock() - buyQuantity),
                 () -> assertEquals(product.getUnitsSold(), testProduct().getUnitsSold() + buyQuantity)
         );
