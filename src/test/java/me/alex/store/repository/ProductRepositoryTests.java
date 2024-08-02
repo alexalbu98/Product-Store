@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 import static me.alex.store.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,9 +59,16 @@ class ProductRepositoryTests extends AbstractPostgresTest {
         );
     }
 
-    private Long insertNewStore() {
-        Long userId = userRepository.save(testStoreOwnerUser()).getId();
-        return storeRepository.save(testStore(userId)).getId();
+    @Test
+    @DisplayName("Exists by name.")
+    void exists_by_name() {
+        var storeId = insertNewStore();
+        var product = testProduct();
+        product.setStoreRef(storeId);
+
+        productRepository.save(product);
+        assertTrue(productRepository.existsByNameInStore(product.getProductDetails().getName(), storeId));
+        assertFalse(productRepository.existsByNameInStore(UUID.randomUUID().toString(), storeId));
     }
 
     @Test
@@ -74,5 +83,10 @@ class ProductRepositoryTests extends AbstractPostgresTest {
         var updated = productRepository.save(savedProduct);
 
         assertEquals(1, updated.getVersion());
+    }
+
+    private Long insertNewStore() {
+        Long userId = userRepository.save(testStoreOwnerUser()).getId();
+        return storeRepository.save(testStore(userId)).getId();
     }
 }

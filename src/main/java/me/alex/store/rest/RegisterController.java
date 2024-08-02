@@ -21,7 +21,7 @@ public class RegisterController {
 
     @PostMapping("/client")
     public String registerClient(@Valid @RequestBody UserDto userDto) {
-        var user = userFactory.fromDto(userDto, UserRole.CLIENT);
+        var user = userFactory.newUserFromDto(userDto, UserRole.CLIENT);
         userService.saveUser(user);
 
         return "Client created successfully";
@@ -29,7 +29,7 @@ public class RegisterController {
 
     @PostMapping("/owner")
     public String registerOwner(@Valid @RequestBody UserDto userDto) {
-        var user = userFactory.fromDto(userDto, UserRole.OWNER);
+        var user = userFactory.newUserFromDto(userDto, UserRole.OWNER);
         userService.saveUser(user);
 
         return "Store owner created successfully";

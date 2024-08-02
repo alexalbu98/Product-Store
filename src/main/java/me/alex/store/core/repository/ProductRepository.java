@@ -13,5 +13,10 @@ public interface ProductRepository extends ListCrudRepository<Product, Long> {
             "WHERE p.name = :name and p.store_ref = :storeId")
     boolean existsByNameInStore(String name, Long storeId);
 
+    @Query("SELECT * FROM Products  WHERE store_ref = :storeRef")
     List<Product> findAllByStoreRef(Long storeRef);
+
+    @Query("SELECT * FROM Products " +
+            "WHERE store_ref = :storeRef and name LIKE CONCAT('%',:name,'%')")
+    List<Product> findAllByStoreRefAndName(Long storeRef, String name);
 }

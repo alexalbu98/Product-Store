@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class UserFactory {
     private final PasswordEncoder passwordEncoder;
 
-    public User fromDto(UserDto userDto, UserRole userRole) {
+    public User newUserFromDto(UserDto userDto, UserRole userRole) {
         return new User(null,
                 userDto.getUsername(),
                 passwordEncoder.encode(userDto.getPassword()),

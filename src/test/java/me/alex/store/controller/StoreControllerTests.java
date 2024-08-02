@@ -99,6 +99,7 @@ class StoreControllerTests extends AbstractPostgresTest {
         createStore(owner, "store");
         StoreDto[] storeDetails = getStoresOwnedByUser(owner);
         var store = storeDetails[0];
+
         var productDto = new ProductDto(store.getId(),
                 "product",
                 "description",
@@ -107,11 +108,43 @@ class StoreControllerTests extends AbstractPostgresTest {
                         10,
                         10,
                         "EURO"));
-
         addProduct(owner, productDto);
 
-        var products = getAllProductsInStore(store.getId());
+        var products = getAllProductsInStore(store.getId(), null);
         assertEquals(1, products.length);
+        assertEquals(productDto.getName(), products[0].getName());
+    }
+
+    @Test
+    @DisplayName("Clients can search a product by name")
+    void search_product_by_name() throws Exception {
+        String owner = createUser();
+        createStore(owner, "store");
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        var store = storeDetails[0];
+
+        var firstProduct = new ProductDto(store.getId(),
+                "car",
+                "description",
+                10,
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
+        var secondProduct = new ProductDto(store.getId(),
+                "vacuum turbo",
+                "description",
+                10,
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
+        addProduct(owner, firstProduct);
+        addProduct(owner, secondProduct);
+
+        var products = getAllProductsInStore(store.getId(), "turbo");
+        assertEquals(1, products.length);
+        assertEquals(secondProduct.getName(), products[0].getName());
     }
 
     @Test
@@ -186,8 +219,10 @@ class StoreControllerTests extends AbstractPostgresTest {
         return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
     }
 
-    private ProductDto[] getAllProductsInStore(Long storeId) throws Exception {
-        MvcResult mvcResult = mvc.perform(get("/store/" + storeId + "/product")
+    private ProductDto[] getAllProductsInStore(Long storeId, String name) throws Exception {
+        String url = name == null ? "/store/" + storeId + "/product"
+                : "/store/" + storeId + "/product?name=" + name;
+        MvcResult mvcResult = mvc.perform(get(url)
                         .with(user("client").password("test").roles(UserRole.CLIENT.name())))
                 .andExpect(status().isOk())
                 .andReturn();

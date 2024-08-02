@@ -11,6 +11,7 @@ import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
 import me.alex.store.rest.dto.ProductDto;
 import me.alex.store.rest.dto.StoreDto;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,8 +69,13 @@ public class StoreService {
                 .toList();
     }
 
-    public List<ProductDto> findAllProducts(Long storeId) {
-        return productRepository.findAllByStoreRef(storeId)
+    public List<ProductDto> findAllProducts(Long storeId, String name) {
+        if (Strings.isBlank(name)) {
+            return productRepository.findAllByStoreRef(storeId)
+                    .stream().map(this::convertToProductDto).toList();
+        }
+
+        return productRepository.findAllByStoreRefAndName(storeId, name)
                 .stream().map(this::convertToProductDto).toList();
     }
 

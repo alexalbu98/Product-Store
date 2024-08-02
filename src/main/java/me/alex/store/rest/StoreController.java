@@ -46,7 +46,7 @@ public class StoreController {
     }
 
     @GetMapping("{storeId}/product")
-    public List<ProductDto> findStoreProducts(@PathVariable Long storeId) {
-        return storeService.findAllProducts(storeId);
+    public List<ProductDto> findStoreProducts(@RequestParam(required = false) String name, @PathVariable Long storeId) {
+        return storeService.findAllProducts(storeId, name);
     }
 }
