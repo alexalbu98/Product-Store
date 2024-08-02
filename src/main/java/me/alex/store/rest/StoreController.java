@@ -22,31 +22,31 @@ public class StoreController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String createStore(Principal principal, @RequestBody @Valid StoreDetails storeDetails) {
-        storeService.createProductStore(principal.getName(), storeDetails);
+        storeService.openProductStore(principal.getName(), storeDetails);
 
         return "Store created successfully";
     }
 
     @GetMapping
     public List<StoreDto> findStoresOwnedByPrincipal(Principal principal) {
-        return storeService.findStores(principal.getName());
+        return storeService.findUserStores(principal.getName());
     }
 
     @GetMapping("/all")
     public List<StoreDto> findAllStores() {
-        return storeService.findAll();
+        return storeService.findAllStores();
     }
 
     @PostMapping(value = "/product", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String addProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
-        var product = productFactory.fromDto(productDto);
-        storeService.addProduct(principal.getName(), product);
+        var product = productFactory.newPruductFromDto(productDto);
+        storeService.addProductToStore(principal.getName(), product);
 
         return "Product add to store successfully.";
     }
 
     @GetMapping("{storeId}/product")
     public List<ProductDto> findStoreProducts(@RequestParam(required = false) String name, @PathVariable Long storeId) {
-        return storeService.findAllProducts(storeId, name);
+        return storeService.findAllStoreProducts(storeId, name);
     }
 }

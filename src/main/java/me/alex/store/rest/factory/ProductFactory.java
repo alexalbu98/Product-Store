@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductFactory {
 
-    public Product fromDto(ProductDto dto) {
+    public Product newPruductFromDto(ProductDto dto) {
         return new Product(null,
                 null,
                 dto.getStoreId(),

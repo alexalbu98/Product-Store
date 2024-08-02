@@ -25,7 +25,7 @@ public class StoreService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public void createProductStore(String username, StoreDetails storeDetails) {
+    public void openProductStore(String username, StoreDetails storeDetails) {
         var user = findUser(username);
 
         if (storeRepository.existsByName(storeDetails.getName())) {
@@ -35,7 +35,7 @@ public class StoreService {
         storeRepository.save(new Store(null, null, user.getId(), storeDetails));
     }
 
-    public List<StoreDto> findStores(String username) {
+    public List<StoreDto> findUserStores(String username) {
         var user = findUser(username);
 
         return storeRepository.findAllByUserRef(user.getId())
@@ -44,14 +44,14 @@ public class StoreService {
                 .toList();
     }
 
-    public void addProduct(String username, Product product) {
+    public void addProductToStore(String username, Product product) {
         var user = findUser(username);
 
-        boolean canEditStore = storeRepository.findAllByUserRef(user.getId())
-                .stream().map(Store::getId)
-                .anyMatch(storeId -> storeId.equals(product.getStoreRef()));
+        if (!storeRepository.existsById(product.getStoreRef())) {
+            throw new IllegalStateException("The store with id: " + product.getStoreRef() + " does not exist.");
+        }
 
-        if (!canEditStore) {
+        if (!userCanEditStore(user.getId(), product.getStoreRef())) {
             throw new IllegalStateException("User cannot modify this store.");
         }
 
@@ -62,14 +62,14 @@ public class StoreService {
         productRepository.save(product);
     }
 
-    public List<StoreDto> findAll() {
+    public List<StoreDto> findAllStores() {
         return storeRepository.findAll()
                 .stream()
                 .map(this::convertToStoreDto)
                 .toList();
     }
 
-    public List<ProductDto> findAllProducts(Long storeId, String name) {
+    public List<ProductDto> findAllStoreProducts(Long storeId, String name) {
         if (Strings.isBlank(name)) {
             return productRepository.findAllByStoreRef(storeId)
                     .stream().map(this::convertToProductDto).toList();
@@ -77,6 +77,12 @@ public class StoreService {
 
         return productRepository.findAllByStoreRefAndName(storeId, name)
                 .stream().map(this::convertToProductDto).toList();
+    }
+
+    private boolean userCanEditStore(Long userId, Long storeId) {
+        return storeRepository.findAllByUserRef(userId)
+                .stream().map(Store::getId)
+                .anyMatch(id -> id.equals(storeId));
     }
 
     private User findUser(String username) {
