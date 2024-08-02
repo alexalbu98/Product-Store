@@ -58,4 +58,12 @@ public class StoreController {
 
         return "Product update successfully!";
     }
+
+    @PatchMapping("{storeId}/product/{productId}")
+    public String changeProductStock(Principal principal, @PathVariable Long storeId,
+                                     @PathVariable Long productId, @RequestParam Integer amount) {
+        storeService.updateProductStock(principal.getName(), storeId, productId, amount);
+
+        return "Product patched successfully!";
+    }
 }

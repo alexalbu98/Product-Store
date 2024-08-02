@@ -143,7 +143,33 @@ class StoreControllerTests extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("Not owner cannot update product.")
+    @DisplayName("Store owner can increase product stock.")
+    void increase_product_stock() throws Exception {
+        String owner = createUser();
+        createStore(owner, "store");
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        var store = storeDetails[0];
+
+        var productDto = new NewProductDto(store.getId(),
+                "product",
+                "description",
+                10,
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
+        addProduct(owner, productDto);
+        var products = getAllProductsInStore(store.getId(), null);
+
+        var initialStock = products[0].getAvailableStock();
+        updateProductStock(owner, store.getId(), products[0].getProductId(), -1);
+
+        var updateProducts = getAllProductsInStore(store.getId(), null);
+        assertEquals(initialStock - 1, updateProducts[0].getAvailableStock());
+    }
+
+    @Test
+    @DisplayName("Nobody besides owner cannot update product.")
     void cannot_update_owner() throws Exception {
         String owner = createUser();
         createStore(owner, "store");
@@ -204,7 +230,7 @@ class StoreControllerTests extends AbstractPostgresTest {
 
     @Test
     @DisplayName("Add product with same name returns bad request.")
-    void same_name_product() throws Exception {
+    void add_with_same_name_product() throws Exception {
         String owner = createUser();
         createStore(owner, "store");
         StoreDto[] storeDetails = getStoresOwnedByUser(owner);
@@ -265,6 +291,14 @@ class StoreControllerTests extends AbstractPostgresTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    private void updateProductStock(String owner, Long storeId, Long productId, int amount) throws Exception {
+        mvc.perform(patch("/store/" + storeId + "/product/" + productId + "?amount=" + amount)
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
 
     private StoreDto[] getStoresOwnedByUser(String owner) throws Exception {
         MvcResult mvcResult = mvc.perform(get("/store")

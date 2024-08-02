@@ -98,11 +98,30 @@ public class StoreService {
             throw new IllegalStateException("Cannot update, the name already exists");
         }
 
-        var product = productRepository.findById(updateProductDto.getProductId())
-                .orElseThrow(() -> new IllegalStateException("The product does not exist."));
-
+        var product = findProduct(updateProductDto.getProductId());
         product.updateDetails(updateProductDto.getProductDetails());
         productRepository.save(product);
+    }
+
+    public void updateProductStock(String username, Long storeId, Long productId, Integer amount) {
+        var user = findUser(username);
+
+        if (!storeRepository.existsById(storeId)) {
+            throw new IllegalStateException("The state with id: " + storeId + " does not exist");
+        }
+
+        if (userCannotEditStore(user.getId(), storeId)) {
+            throw new IllegalStateException("User cannot edit the store.");
+        }
+
+        var product = findProduct(productId);
+        product.increaseStock(amount);
+        productRepository.save(product);
+    }
+
+    private Product findProduct(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException("The product does not exist."));
     }
 
     private boolean userCannotEditStore(Long userId, Long storeId) {
@@ -136,4 +155,5 @@ public class StoreService {
 
                 ));
     }
+
 }
