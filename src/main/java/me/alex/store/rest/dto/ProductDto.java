@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.alex.store.core.model.value.Price;
 
 @Getter
 @NoArgsConstructor
@@ -20,9 +21,5 @@ public class ProductDto {
     @NotNull
     private Integer availableStock;
     @NotNull
-    private Integer priceUnit;
-    @NotNull
-    private Integer priceSubUnit;
-    @NotBlank
-    private String priceCurrency;
+    private Price price;
 }

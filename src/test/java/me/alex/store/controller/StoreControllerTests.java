@@ -3,6 +3,7 @@ package me.alex.store.controller;
 import me.alex.store.AbstractPostgresTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
+import me.alex.store.core.model.value.Price;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.parameters.P;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,9 +103,10 @@ class StoreControllerTests extends AbstractPostgresTest {
                 "product",
                 "description",
                 10,
-                10,
-                10,
-                "EURO");
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
 
         addProduct(owner, productDto);
 
@@ -122,9 +125,10 @@ class StoreControllerTests extends AbstractPostgresTest {
                 "product",
                 "description",
                 10,
-                10,
-                10,
-                "EURO");
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
 
         addProduct(owner, productDto);
 

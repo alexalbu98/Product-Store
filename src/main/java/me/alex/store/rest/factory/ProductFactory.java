@@ -1,7 +1,6 @@
 package me.alex.store.rest.factory;
 
 import me.alex.store.core.model.Product;
-import me.alex.store.core.model.value.Price;
 import me.alex.store.core.model.value.ProductDetails;
 import me.alex.store.rest.dto.ProductDto;
 import org.springframework.stereotype.Component;
@@ -15,9 +14,7 @@ public class ProductFactory {
                 dto.getStoreId(),
                 new ProductDetails(dto.getName(),
                         dto.getDescription(),
-                        new Price(dto.getPriceUnit(),
-                                dto.getPriceSubUnit(),
-                                dto.getPriceCurrency())),
+                        dto.getPrice()),
                 dto.getAvailableStock(),
                 0L);
     }

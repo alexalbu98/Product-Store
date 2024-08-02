@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.alex.store.core.model.Product;
 import me.alex.store.core.model.Store;
 import me.alex.store.core.model.User;
+import me.alex.store.core.model.value.Price;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
@@ -89,8 +90,11 @@ public class StoreService {
                 product.getProductDetails().getName(),
                 product.getProductDetails().getDescription(),
                 product.getAvailableStock(),
-                product.getProductDetails().getPrice().getUnit(),
-                product.getProductDetails().getPrice().getSubUnit(),
-                product.getProductDetails().getPrice().getCurrency());
+                new Price(
+                        product.getProductDetails().getPrice().getUnit(),
+                        product.getProductDetails().getPrice().getSubUnit(),
+                        product.getProductDetails().getPrice().getCurrency()
+
+                ));
     }
 }
