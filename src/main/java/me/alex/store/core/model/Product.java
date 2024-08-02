@@ -1,7 +1,6 @@
 package me.alex.store.core.model;
 
 import lombok.*;
-import me.alex.store.core.model.value.BuyOrder;
 import me.alex.store.core.model.value.ProductDetails;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
@@ -40,14 +39,12 @@ public class Product {
         );
     }
 
-    public BuyOrder buy(Integer quantity) {
+    public void buy(Integer quantity) {
         if (availableStock - quantity < 0) {
             throw new IllegalStateException("Stock is too low for this purchase.");
         }
 
         availableStock -= quantity;
         unitsSold += quantity;
-
-        return new BuyOrder(productDetails, quantity);
     }
 }
