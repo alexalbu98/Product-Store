@@ -2,10 +2,12 @@ package me.alex.store.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import me.alex.store.core.model.value.ProductDetails;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.service.StoreService;
 import me.alex.store.rest.dto.ProductDto;
 import me.alex.store.rest.dto.StoreDto;
+import me.alex.store.rest.dto.UpdateProductDto;
 import me.alex.store.rest.factory.ProductFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +50,12 @@ public class StoreController {
     @GetMapping("{storeId}/product")
     public List<ProductDto> findStoreProducts(@RequestParam(required = false) String name, @PathVariable Long storeId) {
         return storeService.findAllStoreProducts(storeId, name);
+    }
+
+    @PutMapping("{storeId}/product")
+    public String updateProduct(Principal principal, @PathVariable Long storeId, @Valid @RequestBody UpdateProductDto updateProductDto) {
+        storeService.updateProduct(principal.getName(), storeId, updateProductDto);
+
+        return "Product update successfully!";
     }
 }

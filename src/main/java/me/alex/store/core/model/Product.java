@@ -32,6 +32,14 @@ public class Product {
         availableStock += quantity;
     }
 
+    public void updateDetails(ProductDetails newDetails) {
+        productDetails = new ProductDetails(
+                newDetails.getName() == null ? productDetails.getName() : newDetails.getName(),
+                newDetails.getDescription() == null ? productDetails.getDescription() : newDetails.getDescription(),
+                newDetails.getPrice() == null ? productDetails.getPrice() : newDetails.getPrice()
+        );
+    }
+
     public BuyOrder buy(Integer quantity) {
         if (availableStock - quantity < 0) {
             throw new IllegalStateException("Stock is too low for this purchase.");
