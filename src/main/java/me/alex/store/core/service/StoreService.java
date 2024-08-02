@@ -9,7 +9,8 @@ import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
-import me.alex.store.rest.dto.ProductDto;
+import me.alex.store.rest.dto.ExistingProductDto;
+import me.alex.store.rest.dto.NewProductDto;
 import me.alex.store.rest.dto.StoreDto;
 import me.alex.store.rest.dto.UpdateProductDto;
 import org.apache.logging.log4j.util.Strings;
@@ -70,7 +71,7 @@ public class StoreService {
                 .toList();
     }
 
-    public List<ProductDto> findAllStoreProducts(Long storeId, String name) {
+    public List<ExistingProductDto> findAllStoreProducts(Long storeId, String name) {
         if (Strings.isBlank(name)) {
             return productRepository.findAllByStoreRef(storeId)
                     .stream().map(this::convertToProductDto).toList();
@@ -122,8 +123,9 @@ public class StoreService {
                 store.getStoreDetails().getAddress().toString());
     }
 
-    private ProductDto convertToProductDto(Product product) {
-        return new ProductDto(product.getStoreRef(),
+    private ExistingProductDto convertToProductDto(Product product) {
+        return new ExistingProductDto(product.getId(),
+                product.getStoreRef(),
                 product.getProductDetails().getName(),
                 product.getProductDetails().getDescription(),
                 product.getAvailableStock(),

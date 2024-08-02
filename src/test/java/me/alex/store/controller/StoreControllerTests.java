@@ -4,18 +4,20 @@ import me.alex.store.AbstractPostgresTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.Price;
+import me.alex.store.core.model.value.ProductDetails;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
-import me.alex.store.rest.dto.ProductDto;
+import me.alex.store.rest.dto.ExistingProductDto;
+import me.alex.store.rest.dto.NewProductDto;
 import me.alex.store.rest.dto.StoreDto;
+import me.alex.store.rest.dto.UpdateProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +26,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import static me.alex.store.TestData.testStoreOwnerUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -100,7 +101,7 @@ class StoreControllerTests extends AbstractPostgresTest {
         StoreDto[] storeDetails = getStoresOwnedByUser(owner);
         var store = storeDetails[0];
 
-        var productDto = new ProductDto(store.getId(),
+        var productDto = new NewProductDto(store.getId(),
                 "product",
                 "description",
                 10,
@@ -116,6 +117,60 @@ class StoreControllerTests extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("Store owner can update product.")
+    void can_update() throws Exception {
+        String owner = createUser();
+        createStore(owner, "store");
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        var store = storeDetails[0];
+
+        var productDto = new NewProductDto(store.getId(),
+                "product",
+                "description",
+                10,
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
+        addProduct(owner, productDto);
+        var products = getAllProductsInStore(store.getId(), null);
+
+        updateProduct(owner, store.getId(),
+                new UpdateProductDto(products[0].getProductId(), new ProductDetails("test", null, null)));
+
+        var updateProducts = getAllProductsInStore(store.getId(), null);
+        assertEquals("test", updateProducts[0].getName());
+    }
+
+    @Test
+    @DisplayName("Not owner cannot update product.")
+    void cannot_update_owner() throws Exception {
+        String owner = createUser();
+        createStore(owner, "store");
+        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+        var store = storeDetails[0];
+
+        var productDto = new NewProductDto(store.getId(),
+                "product",
+                "description",
+                10,
+                new Price(
+                        10,
+                        10,
+                        "EURO"));
+        addProduct(owner, productDto);
+        var products = getAllProductsInStore(store.getId(), null);
+        var newDetails = new UpdateProductDto(products[0].getProductId(), new ProductDetails("test", null, null));
+
+        var body = objectMapper.writeValueAsString(newDetails);
+        mvc.perform(put("/store/" + store.getId() + "/product")
+                        .with(user("another owner").password("test").roles(UserRole.OWNER.name()))
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("Clients can search a product by name")
     void search_product_by_name() throws Exception {
         String owner = createUser();
@@ -123,7 +178,7 @@ class StoreControllerTests extends AbstractPostgresTest {
         StoreDto[] storeDetails = getStoresOwnedByUser(owner);
         var store = storeDetails[0];
 
-        var firstProduct = new ProductDto(store.getId(),
+        var firstProduct = new NewProductDto(store.getId(),
                 "car",
                 "description",
                 10,
@@ -131,7 +186,7 @@ class StoreControllerTests extends AbstractPostgresTest {
                         10,
                         10,
                         "EURO"));
-        var secondProduct = new ProductDto(store.getId(),
+        var secondProduct = new NewProductDto(store.getId(),
                 "vacuum turbo",
                 "description",
                 10,
@@ -154,7 +209,7 @@ class StoreControllerTests extends AbstractPostgresTest {
         createStore(owner, "store");
         StoreDto[] storeDetails = getStoresOwnedByUser(owner);
         var store = storeDetails[0];
-        var productDto = new ProductDto(store.getId(),
+        var productDto = new NewProductDto(store.getId(),
                 "product",
                 "description",
                 10,
@@ -191,10 +246,20 @@ class StoreControllerTests extends AbstractPostgresTest {
                 .andExpect(status().isOk());
     }
 
-    private void addProduct(String owner, ProductDto productDto) throws Exception {
-        var body = objectMapper.writeValueAsString(productDto);
+    private void addProduct(String owner, NewProductDto newProductDto) throws Exception {
+        var body = objectMapper.writeValueAsString(newProductDto);
 
         mvc.perform(post("/store/product")
+                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    private void updateProduct(String owner, Long storeId, UpdateProductDto updateProductDto) throws Exception {
+        var body = objectMapper.writeValueAsString(updateProductDto);
+
+        mvc.perform(put("/store/" + storeId + "/product")
                         .with(user(owner).password("test").roles(UserRole.OWNER.name()))
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -219,7 +284,7 @@ class StoreControllerTests extends AbstractPostgresTest {
         return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
     }
 
-    private ProductDto[] getAllProductsInStore(Long storeId, String name) throws Exception {
+    private ExistingProductDto[] getAllProductsInStore(Long storeId, String name) throws Exception {
         String url = name == null ? "/store/" + storeId + "/product"
                 : "/store/" + storeId + "/product?name=" + name;
         MvcResult mvcResult = mvc.perform(get(url)
@@ -227,7 +292,7 @@ class StoreControllerTests extends AbstractPostgresTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ProductDto[].class);
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ExistingProductDto[].class);
     }
 
 }

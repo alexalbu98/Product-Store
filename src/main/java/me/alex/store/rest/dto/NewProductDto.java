@@ -11,15 +11,15 @@ import me.alex.store.core.model.value.Price;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto {
+public class NewProductDto {
     @NotNull
-    private Long storeId;
+    protected Long storeId;
     @NotBlank
-    private String name;
+    protected String name;
     @NotBlank
-    private String description;
+    protected String description;
     @NotNull
-    private Integer availableStock;
+    protected Integer availableStock;
     @NotNull
-    private Price price;
+    protected Price price;
 }

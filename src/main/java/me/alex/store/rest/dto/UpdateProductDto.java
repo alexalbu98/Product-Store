@@ -12,8 +12,6 @@ import me.alex.store.core.model.value.ProductDetails;
 @AllArgsConstructor
 public class UpdateProductDto {
     @NotNull
-    private Long storeId;
-    @NotNull
     private Long productId;
     @Valid
     @NotNull
