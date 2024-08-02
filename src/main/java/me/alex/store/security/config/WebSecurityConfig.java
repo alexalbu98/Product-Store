@@ -50,6 +50,8 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register/**").permitAll()
+                        .requestMatchers("/v3/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/store/**").hasAnyRole(UserRole.CLIENT.name(), UserRole.OWNER.name())
                         .requestMatchers("/store/**").hasRole(UserRole.OWNER.name())
                         .anyRequest().authenticated())
