@@ -17,18 +17,18 @@ public class CacheConfig {
     @Bean
     public CaffeineCache storeCache() {
         return new CaffeineCache("storeCache", Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMinutes(1))
+                .expireAfterWrite(Duration.ofMinutes(60))
                 .initialCapacity(1)
-                .maximumSize(2000)
+                .maximumSize(6000)
                 .build());
     }
 
     @Bean
     public CaffeineCache productCache() {
         return new CaffeineCache("productCache", Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMinutes(1))
+                .expireAfterWrite(Duration.ofMinutes(60))
                 .initialCapacity(1)
-                .maximumSize(2000)
+                .maximumSize(6000)
                 .build());
     }
 
