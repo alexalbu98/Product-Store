@@ -14,6 +14,7 @@ import me.alex.store.rest.dto.NewProductDto;
 import me.alex.store.rest.dto.StoreDto;
 import me.alex.store.rest.dto.UpdateProductDto;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +65,7 @@ public class StoreService {
         productRepository.save(product);
     }
 
+    @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager")
     public List<StoreDto> findAllStores() {
         return storeRepository.findAll()
                 .stream()

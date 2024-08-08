@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.io.Serializable;
+
 import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.USE_EMPTY;
 
 @Getter
@@ -14,7 +16,7 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("stores")
-public class Store {
+public class Store implements Serializable {
     @Id
     @Setter(AccessLevel.NONE)
     private Long id;

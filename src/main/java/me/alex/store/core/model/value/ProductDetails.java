@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.data.relational.core.mapping.Embedded;
 
+import java.io.Serializable;
+
 import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.USE_EMPTY;
 
 @Getter
@@ -11,7 +13,7 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ProductDetails {
+public class ProductDetails implements Serializable {
     String name;
     String description;
     @Valid

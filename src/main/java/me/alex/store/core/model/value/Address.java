@@ -4,9 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.ToString;
 import lombok.Value;
 
+import java.io.Serializable;
+
 @Value
 @ToString
-public class Address {
+public class Address implements Serializable {
     @NotBlank
     String country;
     @NotBlank
