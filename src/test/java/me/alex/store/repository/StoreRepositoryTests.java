@@ -1,6 +1,6 @@
 package me.alex.store.repository;
 
-import me.alex.store.AbstractPostgresTest;
+import me.alex.store.AbstractTest;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class StoreRepositoryTests extends AbstractPostgresTest {
+class StoreRepositoryTests extends AbstractTest {
 
     @Autowired
     StoreRepository storeRepository;

@@ -15,6 +15,7 @@ import me.alex.store.rest.dto.UpdateProductDto;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,10 @@ public class StoreService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    @CacheEvict(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username"),
+            @CacheEvict(cacheNames = "storeCache", cacheManager = "redisCacheManager", key = "#username")
+    })
     public void openProductStore(String username, StoreDetails storeDetails) {
         var user = findUser(username);
 
@@ -39,7 +43,10 @@ public class StoreService {
         storeRepository.save(new Store(null, null, user.getId(), storeDetails));
     }
 
-    @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username")
+    @Caching(cacheable = {
+            @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username"),
+            @Cacheable(cacheNames = "storeCache", cacheManager = "redisCacheManager", key = "#username")}
+    )
     public List<StoreDto> findUserStores(String username) {
         var user = findUser(username);
 
@@ -49,7 +56,10 @@ public class StoreService {
                 .toList();
     }
 
-    @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#product.storeRef")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#product.storeRef"),
+            @CacheEvict(cacheNames = "productCache", cacheManager = "redisCacheManager", key = "#product.storeRef"),
+    })
     public void addProductToStore(String username, Product product) {
         var user = findUser(username);
 
@@ -68,7 +78,10 @@ public class StoreService {
         productRepository.save(product);
     }
 
-    @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager")
+    @Caching(cacheable = {
+            @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager"),
+            @Cacheable(cacheNames = "storeCache", cacheManager = "redisCacheManager")}
+    )
     public List<StoreDto> findAllStores() {
         return storeRepository.findAll()
                 .stream()
@@ -76,7 +89,10 @@ public class StoreService {
                 .toList();
     }
 
-    @Cacheable(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId")
+    @Caching(cacheable = {
+            @Cacheable(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId"),
+            @Cacheable(cacheNames = "productCache", cacheManager = "redisCacheManager", key = "#storeId")}
+    )
     public List<ExistingProductDto> findAllStoreProducts(Long storeId, String name) {
         if (Strings.isBlank(name)) {
             return productRepository.findAllByStoreRef(storeId)
@@ -87,7 +103,10 @@ public class StoreService {
                 .stream().map(this::convertToProductDto).toList();
     }
 
-    @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId"),
+            @CacheEvict(cacheNames = "productCache", cacheManager = "redisCacheManager", key = "#storeId")
+    })
     public void updateProduct(String username, Long storeId, UpdateProductDto updateProductDto) {
         var user = findUser(username);
 
@@ -110,7 +129,10 @@ public class StoreService {
         productRepository.save(product);
     }
 
-    @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId"),
+            @CacheEvict(cacheNames = "productCache", cacheManager = "redisCacheManager", key = "#storeId")
+    })
     public void updateProductStock(String username, Long storeId, Long productId, Integer amount) {
         var user = findUser(username);
 
