@@ -10,10 +10,10 @@ import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
 import me.alex.store.rest.dto.ExistingProductDto;
-import me.alex.store.rest.dto.NewProductDto;
 import me.alex.store.rest.dto.StoreDto;
 import me.alex.store.rest.dto.UpdateProductDto;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +28,7 @@ public class StoreService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
+    @CacheEvict(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username")
     public void openProductStore(String username, StoreDetails storeDetails) {
         var user = findUser(username);
 
@@ -38,6 +39,7 @@ public class StoreService {
         storeRepository.save(new Store(null, null, user.getId(), storeDetails));
     }
 
+    @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username")
     public List<StoreDto> findUserStores(String username) {
         var user = findUser(username);
 
@@ -47,6 +49,7 @@ public class StoreService {
                 .toList();
     }
 
+    @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#product.storeRef")
     public void addProductToStore(String username, Product product) {
         var user = findUser(username);
 
@@ -73,7 +76,7 @@ public class StoreService {
                 .toList();
     }
 
-    @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager")
+    @Cacheable(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId")
     public List<ExistingProductDto> findAllStoreProducts(Long storeId, String name) {
         if (Strings.isBlank(name)) {
             return productRepository.findAllByStoreRef(storeId)
@@ -84,6 +87,7 @@ public class StoreService {
                 .stream().map(this::convertToProductDto).toList();
     }
 
+    @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId")
     public void updateProduct(String username, Long storeId, UpdateProductDto updateProductDto) {
         var user = findUser(username);
 
@@ -106,6 +110,7 @@ public class StoreService {
         productRepository.save(product);
     }
 
+    @CacheEvict(cacheNames = "productCache", cacheManager = "caffeineCacheManager", key = "#storeId")
     public void updateProductStock(String username, Long storeId, Long productId, Integer amount) {
         var user = findUser(username);
 
