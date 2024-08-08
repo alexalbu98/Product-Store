@@ -7,10 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.alex.store.core.model.value.ProductDetails;
 
+import java.io.Serializable;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateProductDto {
+public class UpdateProductDto implements Serializable {
     @NotNull
     private Long productId;
     @Valid

@@ -8,10 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.alex.store.core.model.value.Price;
 
+import java.io.Serializable;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewProductDto {
+public class NewProductDto implements Serializable {
     @NotNull
     protected Long storeId;
     @NotBlank

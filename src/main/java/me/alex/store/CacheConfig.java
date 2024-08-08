@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableCaching
 public class CacheConfig {
     @Bean
-    public CaffeineCache caffeineCacheConfig() {
+    public CaffeineCache storeCache() {
         return new CaffeineCache("storeCache", Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(1))
                 .initialCapacity(1)
@@ -24,9 +24,18 @@ public class CacheConfig {
     }
 
     @Bean
-    public CacheManager caffeineCacheManager(CaffeineCache caffeineCache) {
+    public CaffeineCache productCache() {
+        return new CaffeineCache("productCache", Caffeine.newBuilder()
+                .expireAfterWrite(Duration.ofMinutes(1))
+                .initialCapacity(1)
+                .maximumSize(2000)
+                .build());
+    }
+
+    @Bean
+    public CacheManager caffeineCacheManager() {
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(Collections.singletonList(caffeineCache));
+        manager.setCaches(List.of(productCache(), storeCache()));
         return manager;
     }
 }

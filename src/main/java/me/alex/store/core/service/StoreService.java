@@ -73,6 +73,7 @@ public class StoreService {
                 .toList();
     }
 
+    @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager")
     public List<ExistingProductDto> findAllStoreProducts(Long storeId, String name) {
         if (Strings.isBlank(name)) {
             return productRepository.findAllByStoreRef(storeId)
