@@ -47,13 +47,14 @@ public class StoreService {
             @Cacheable(cacheNames = "storeCache", cacheManager = "caffeineCacheManager", key = "#username"),
             @Cacheable(cacheNames = "storeCache", cacheManager = "redisCacheManager", key = "#username")}
     )
-    public List<StoreDto> findUserStores(String username) {
+    public StoreDto[] findUserStores(String username) {
         var user = findUser(username);
 
         return storeRepository.findAllByUserRef(user.getId())
                 .stream()
                 .map(this::convertToStoreDto)
-                .toList();
+                .toList()
+                .toArray(new StoreDto[0]);
     }
 
     @Caching(evict = {

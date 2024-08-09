@@ -1,11 +1,13 @@
 package me.alex.store.rest.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import me.alex.store.core.model.value.Price;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString
 public class ExistingProductDto extends NewProductDto {
     protected Long productId;
 

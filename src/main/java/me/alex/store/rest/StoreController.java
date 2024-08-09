@@ -30,7 +30,7 @@ public class StoreController {
     }
 
     @GetMapping
-    public List<StoreDto> findStoresOwnedByPrincipal(Principal principal) {
+    public StoreDto[] findStoresOwnedByPrincipal(Principal principal) {
         return storeService.findUserStores(principal.getName());
     }
 

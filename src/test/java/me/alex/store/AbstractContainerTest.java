@@ -7,7 +7,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 
-public abstract class AbstractTest {
+public abstract class AbstractContainerTest {
     private final static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
             .withDatabaseName("store-db")
             .withUsername("sa")

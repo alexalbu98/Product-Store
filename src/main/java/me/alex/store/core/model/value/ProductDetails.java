@@ -11,12 +11,12 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode
+@ToString
 public class ProductDetails implements Serializable {
-    String name;
-    String description;
+    private String name;
+    private String description;
     @Valid
     @Embedded(onEmpty = USE_EMPTY, prefix = "price_")
-    Price price;
+    private Price price;
 }

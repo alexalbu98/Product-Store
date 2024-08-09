@@ -1,6 +1,6 @@
 package me.alex.store.repository;
 
-import me.alex.store.AbstractTest;
+import me.alex.store.AbstractContainerTest;
 import me.alex.store.core.repository.ProductRepository;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class ProductRepositoryTests extends AbstractTest {
+class ProductRepositoryTests extends AbstractContainerTest {
 
     @Autowired
     ProductRepository productRepository;

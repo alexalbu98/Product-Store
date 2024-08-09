@@ -1,20 +1,22 @@
 package me.alex.store.core.model.value;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.ToString;
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Value
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Address implements Serializable {
     @NotBlank
-    String country;
+    private String country;
     @NotBlank
-    String city;
+    private String city;
     @NotBlank
-    String street;
+    private String street;
     @NotBlank
-    String zipCode;
+    private String zipCode;
 }

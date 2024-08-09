@@ -1,6 +1,6 @@
 package me.alex.store.controller;
 
-import me.alex.store.AbstractTest;
+import me.alex.store.AbstractContainerTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.repository.UserRepository;
 import me.alex.store.rest.dto.UserDto;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-class RegisterControllerTests extends AbstractTest {
+class RegisterControllerTests extends AbstractContainerTest {
 
     @Autowired
     MockMvc mvc;

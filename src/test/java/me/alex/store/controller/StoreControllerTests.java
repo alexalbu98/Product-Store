@@ -1,6 +1,6 @@
 package me.alex.store.controller;
 
-import me.alex.store.AbstractTest;
+import me.alex.store.AbstractContainerTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.Price;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-class StoreControllerTests extends AbstractTest {
+class StoreControllerTests extends AbstractContainerTest {
     @Autowired
     MockMvc mvc;
 
