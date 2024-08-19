@@ -6,7 +6,7 @@ pipeline {
                 sh "./mvnw compile"
             }
         }
-        stage("Unit test") {
+        stage("Testing") {
             steps {
                     sh "./mvnw test"
             }
