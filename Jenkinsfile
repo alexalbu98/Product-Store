@@ -3,12 +3,17 @@ pipeline {
     stages {
         stage("Compile") {
             steps {
-                sh "./mvnw compile"
+                sh "./mvnw clean compile"
             }
         }
         stage("Testing") {
             steps {
-                    sh "./mvnw test"
+                    sh "./mvnw clean test"
+            }
+        }
+        stage("Test coverage") {
+            steps {
+                    sh "./mvnw clean verify"
             }
         }
     }
