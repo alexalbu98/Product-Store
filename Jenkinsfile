@@ -6,14 +6,23 @@ pipeline {
                 sh "./mvnw clean compile"
             }
         }
-        stage("Testing") {
+        stage("Functional Testing") {
             steps {
-                    sh "./mvnw clean test"
+                sh "./mvnw clean test"
             }
         }
-        stage("Test coverage") {
+        stage("Static Code Analysis") {
             steps {
-                    sh "./mvnw clean verify"
+                sh "./mvnw clean verify"
+            }
+        }
+        stage("Deploy") {
+            when {
+                branch 'dev'
+            }
+            steps {
+                sh "./mvnw clean compile"
+                sh "echo 'Deploying Code...'"
             }
         }
     }
