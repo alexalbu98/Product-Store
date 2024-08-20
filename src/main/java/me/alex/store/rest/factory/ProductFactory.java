@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductFactory {
 
-    public Product newPruductFromDto(NewProductDto dto) {
-        return new Product(null,
-                null,
-                dto.getStoreId(),
-                new ProductDetails(dto.getName(),
-                        dto.getDescription(),
-                        dto.getPrice()),
-                dto.getAvailableStock(),
-                0L);
-    }
+  public Product newPruductFromDto(NewProductDto dto) {
+    return new Product(null,
+        null,
+        dto.getStoreId(),
+        new ProductDetails(dto.getName(),
+            dto.getDescription(),
+            dto.getPrice()),
+        dto.getAvailableStock(),
+        0L);
+  }
 }

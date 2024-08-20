@@ -1,5 +1,10 @@
 package me.alex.store.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import me.alex.store.AbstractContainerTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.repository.UserRepository;
@@ -14,85 +19,80 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
 class RegisterControllerTests extends AbstractContainerTest {
 
-    @Autowired
-    MockMvc mvc;
+  @Autowired
+  MockMvc mvc;
 
-    @Autowired
-    UserRepository userRepository;
+  @Autowired
+  UserRepository userRepository;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+  ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    @DisplayName("Create a new user with client role.")
-    void create_client() throws Exception {
-        var validDto = new UserDto("test", "test", "test", "test");
-        var body = objectMapper.writeValueAsString(validDto);
+  @Test
+  @DisplayName("Create a new user with client role.")
+  void create_client() throws Exception {
+    var validDto = new UserDto("test", "test", "test", "test");
+    var body = objectMapper.writeValueAsString(validDto);
 
-        mvc.perform(post("/register/client")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+    mvc.perform(post("/register/client")
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
 
-        var users = userRepository.findAll();
-        assertEquals(1, users.size());
-        assertEquals(UserRole.CLIENT, users.get(0).getUserRole());
-        assertNotEquals(validDto.getPassword(), users.get(0).getPassword());
-    }
+    var users = userRepository.findAll();
+    assertEquals(1, users.size());
+    assertEquals(UserRole.CLIENT, users.get(0).getUserRole());
+    assertNotEquals(validDto.getPassword(), users.get(0).getPassword());
+  }
 
-    @Test
-    @DisplayName("Create a new user with owner role.")
-    void create_owner() throws Exception {
-        var validDto = new UserDto("test", "test", "test", "test");
-        var body = objectMapper.writeValueAsString(validDto);
+  @Test
+  @DisplayName("Create a new user with owner role.")
+  void create_owner() throws Exception {
+    var validDto = new UserDto("test", "test", "test", "test");
+    var body = objectMapper.writeValueAsString(validDto);
 
-        mvc.perform(post("/register/owner")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+    mvc.perform(post("/register/owner")
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
 
-        var users = userRepository.findAll();
-        assertEquals(1, users.size());
-        assertEquals(UserRole.OWNER, users.get(0).getUserRole());
-        assertNotEquals(validDto.getPassword(), users.get(0).getPassword());
-    }
+    var users = userRepository.findAll();
+    assertEquals(1, users.size());
+    assertEquals(UserRole.OWNER, users.get(0).getUserRole());
+    assertNotEquals(validDto.getPassword(), users.get(0).getPassword());
+  }
 
-    @Test
-    @DisplayName("Invalid user data returns bad request.")
-    void invalid_user() throws Exception {
-        var invalidDto = new UserDto("", "test", "test", "test");
-        var body = objectMapper.writeValueAsString(invalidDto);
+  @Test
+  @DisplayName("Invalid user data returns bad request.")
+  void invalid_user() throws Exception {
+    var invalidDto = new UserDto("", "test", "test", "test");
+    var body = objectMapper.writeValueAsString(invalidDto);
 
-        mvc.perform(post("/register/owner")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
+    mvc.perform(post("/register/owner")
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 
 
-    @Test
-    @DisplayName("Create a user with existing username returns bad request")
-    void same_username() throws Exception {
-        var validDto = new UserDto("test", "test", "test", "test");
-        var body = objectMapper.writeValueAsString(validDto);
+  @Test
+  @DisplayName("Create a user with existing username returns bad request")
+  void same_username() throws Exception {
+    var validDto = new UserDto("test", "test", "test", "test");
+    var body = objectMapper.writeValueAsString(validDto);
 
-        mvc.perform(post("/register/owner")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+    mvc.perform(post("/register/owner")
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
 
-        mvc.perform(post("/register/client")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
+    mvc.perform(post("/register/client")
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 }

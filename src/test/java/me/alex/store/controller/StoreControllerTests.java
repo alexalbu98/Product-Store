@@ -1,5 +1,14 @@
 package me.alex.store.controller;
 
+import static me.alex.store.TestData.testStoreOwnerUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import me.alex.store.AbstractContainerTest;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
@@ -23,310 +32,309 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static me.alex.store.TestData.testStoreOwnerUser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
 class StoreControllerTests extends AbstractContainerTest {
-    @Autowired
-    MockMvc mvc;
 
-    @Autowired
-    UserRepository userRepository;
+  @Autowired
+  MockMvc mvc;
 
-    @Autowired
-    StoreRepository storeRepository;
+  @Autowired
+  UserRepository userRepository;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  StoreRepository storeRepository;
 
-    @Test
-    @DisplayName("Owner can create a new store.")
-    void create_store() throws Exception {
-        String user = createUser();
+  ObjectMapper objectMapper = new ObjectMapper();
 
-        createStore(user, "test");
+  @Test
+  @DisplayName("Owner can create a new store.")
+  void create_store() throws Exception {
+    String user = createUser();
 
-        var stores = storeRepository.findAll();
-        assertEquals(1, stores.size());
-    }
+    createStore(user, "test");
 
-    @Test
-    @DisplayName("Client receives forbidden when trying to create a store.")
-    void client_fails_to_creates_store() throws Exception {
-        var validStoreDetails = new StoreDetails("test", "test",
-                new Address("test", "test", "test", "test"));
-        var body = objectMapper.writeValueAsString(validStoreDetails);
+    var stores = storeRepository.findAll();
+    assertEquals(1, stores.size());
+  }
 
-        mvc.perform(post("/store")
-                        .with(user("client").password("test").roles(UserRole.CLIENT.name()))
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
+  @Test
+  @DisplayName("Client receives forbidden when trying to create a store.")
+  void client_fails_to_creates_store() throws Exception {
+    var validStoreDetails = new StoreDetails("test", "test",
+        new Address("test", "test", "test", "test"));
+    var body = objectMapper.writeValueAsString(validStoreDetails);
 
-    @Test
-    @DisplayName("Owner can see his stores.")
-    void owner_can_see_stores() throws Exception {
-        String owner = createUser();
+    mvc.perform(post("/store")
+            .with(user("client").password("test").roles(UserRole.CLIENT.name()))
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
 
-        createStore(owner, "first");
-        createStore(owner, "second");
+  @Test
+  @DisplayName("Owner can see his stores.")
+  void owner_can_see_stores() throws Exception {
+    String owner = createUser();
 
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        assertEquals(2, storeDetails.length);
-    }
+    createStore(owner, "first");
+    createStore(owner, "second");
 
-    @Test
-    @DisplayName("Clients can see all the stores.")
-    void show_all_stores() throws Exception {
-        String owner = createUser();
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    assertEquals(2, storeDetails.length);
+  }
 
-        createStore(owner, "first");
-        createStore(owner, "second");
+  @Test
+  @DisplayName("Clients can see all the stores.")
+  void show_all_stores() throws Exception {
+    String owner = createUser();
 
-        StoreDto[] storeDetails = getAllStores();
-        assertEquals(2, storeDetails.length);
-    }
+    createStore(owner, "first");
+    createStore(owner, "second");
 
-    @Test
-    @DisplayName("Store owner can add product.")
-    void can_add_product() throws Exception {
-        String owner = createUser();
-        createStore(owner, "store");
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        var store = storeDetails[0];
+    StoreDto[] storeDetails = getAllStores();
+    assertEquals(2, storeDetails.length);
+  }
 
-        var productDto = new NewProductDto(store.getId(),
-                "product",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
-        addProduct(owner, productDto);
+  @Test
+  @DisplayName("Store owner can add product.")
+  void can_add_product() throws Exception {
+    String owner = createUser();
+    createStore(owner, "store");
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    var store = storeDetails[0];
 
-        var products = getAllProductsInStore(store.getId(), null);
-        assertEquals(1, products.length);
-        assertEquals(productDto.getName(), products[0].getName());
-    }
+    var productDto = new NewProductDto(store.getId(),
+        "product",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
+    addProduct(owner, productDto);
 
-    @Test
-    @DisplayName("Store owner can update product.")
-    void can_update() throws Exception {
-        String owner = createUser();
-        createStore(owner, "store");
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        var store = storeDetails[0];
+    var products = getAllProductsInStore(store.getId(), null);
+    assertEquals(1, products.length);
+    assertEquals(productDto.getName(), products[0].getName());
+  }
 
-        var productDto = new NewProductDto(store.getId(),
-                "product",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
-        addProduct(owner, productDto);
-        var products = getAllProductsInStore(store.getId(), null);
+  @Test
+  @DisplayName("Store owner can update product.")
+  void can_update() throws Exception {
+    String owner = createUser();
+    createStore(owner, "store");
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    var store = storeDetails[0];
 
-        updateProduct(owner, store.getId(),
-                new UpdateProductDto(products[0].getProductId(), new ProductDetails("test", null, null)));
+    var productDto = new NewProductDto(store.getId(),
+        "product",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
+    addProduct(owner, productDto);
+    var products = getAllProductsInStore(store.getId(), null);
 
-        var updateProducts = getAllProductsInStore(store.getId(), null);
-        assertEquals("test", updateProducts[0].getName());
-    }
+    updateProduct(owner, store.getId(),
+        new UpdateProductDto(products[0].getProductId(), new ProductDetails("test", null, null)));
 
-    @Test
-    @DisplayName("Store owner can increase product stock.")
-    void increase_product_stock() throws Exception {
-        String owner = createUser();
-        createStore(owner, "store");
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        var store = storeDetails[0];
+    var updateProducts = getAllProductsInStore(store.getId(), null);
+    assertEquals("test", updateProducts[0].getName());
+  }
 
-        var productDto = new NewProductDto(store.getId(),
-                "product",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
-        addProduct(owner, productDto);
-        var products = getAllProductsInStore(store.getId(), null);
+  @Test
+  @DisplayName("Store owner can increase product stock.")
+  void increase_product_stock() throws Exception {
+    String owner = createUser();
+    createStore(owner, "store");
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    var store = storeDetails[0];
 
-        var initialStock = products[0].getAvailableStock();
-        updateProductStock(owner, store.getId(), products[0].getProductId(), -1);
+    var productDto = new NewProductDto(store.getId(),
+        "product",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
+    addProduct(owner, productDto);
+    var products = getAllProductsInStore(store.getId(), null);
 
-        var updateProducts = getAllProductsInStore(store.getId(), null);
-        assertEquals(initialStock - 1, updateProducts[0].getAvailableStock());
-    }
+    var initialStock = products[0].getAvailableStock();
+    updateProductStock(owner, store.getId(), products[0].getProductId(), -1);
 
-    @Test
-    @DisplayName("Nobody besides owner cannot update product.")
-    void cannot_update_owner() throws Exception {
-        String owner = createUser();
-        createStore(owner, "store");
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        var store = storeDetails[0];
+    var updateProducts = getAllProductsInStore(store.getId(), null);
+    assertEquals(initialStock - 1, updateProducts[0].getAvailableStock());
+  }
 
-        var productDto = new NewProductDto(store.getId(),
-                "product",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
-        addProduct(owner, productDto);
-        var products = getAllProductsInStore(store.getId(), null);
-        var newDetails = new UpdateProductDto(products[0].getProductId(), new ProductDetails("test", null, null));
+  @Test
+  @DisplayName("Nobody besides owner cannot update product.")
+  void cannot_update_owner() throws Exception {
+    String owner = createUser();
+    createStore(owner, "store");
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    var store = storeDetails[0];
 
-        var body = objectMapper.writeValueAsString(newDetails);
-        mvc.perform(put("/store/" + store.getId() + "/product")
-                        .with(user("another owner").password("test").roles(UserRole.OWNER.name()))
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
+    var productDto = new NewProductDto(store.getId(),
+        "product",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
+    addProduct(owner, productDto);
+    var products = getAllProductsInStore(store.getId(), null);
+    var newDetails = new UpdateProductDto(products[0].getProductId(),
+        new ProductDetails("test", null, null));
 
-    @Test
-    @DisplayName("Clients can search a product by name")
-    void search_product_by_name() throws Exception {
-        String owner = createUser();
-        createStore(owner, "store");
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        var store = storeDetails[0];
+    var body = objectMapper.writeValueAsString(newDetails);
+    mvc.perform(put("/store/" + store.getId() + "/product")
+            .with(user("another owner").password("test").roles(UserRole.OWNER.name()))
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 
-        var firstProduct = new NewProductDto(store.getId(),
-                "car",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
-        var secondProduct = new NewProductDto(store.getId(),
-                "vacuum turbo",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
-        addProduct(owner, firstProduct);
-        addProduct(owner, secondProduct);
+  @Test
+  @DisplayName("Clients can search a product by name")
+  void search_product_by_name() throws Exception {
+    String owner = createUser();
+    createStore(owner, "store");
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    var store = storeDetails[0];
 
-        var products = getAllProductsInStore(store.getId(), "turbo");
-        assertEquals(1, products.length);
-        assertEquals(secondProduct.getName(), products[0].getName());
-    }
+    var firstProduct = new NewProductDto(store.getId(),
+        "car",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
+    var secondProduct = new NewProductDto(store.getId(),
+        "vacuum turbo",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
+    addProduct(owner, firstProduct);
+    addProduct(owner, secondProduct);
 
-    @Test
-    @DisplayName("Add product with same name returns bad request.")
-    void add_with_same_name_product() throws Exception {
-        String owner = createUser();
-        createStore(owner, "store");
-        StoreDto[] storeDetails = getStoresOwnedByUser(owner);
-        var store = storeDetails[0];
-        var productDto = new NewProductDto(store.getId(),
-                "product",
-                "description",
-                10,
-                new Price(
-                        10,
-                        10,
-                        "EURO"));
+    var products = getAllProductsInStore(store.getId(), "turbo");
+    assertEquals(1, products.length);
+    assertEquals(secondProduct.getName(), products[0].getName());
+  }
 
-        addProduct(owner, productDto);
+  @Test
+  @DisplayName("Add product with same name returns bad request.")
+  void add_with_same_name_product() throws Exception {
+    String owner = createUser();
+    createStore(owner, "store");
+    StoreDto[] storeDetails = getStoresOwnedByUser(owner);
+    var store = storeDetails[0];
+    var productDto = new NewProductDto(store.getId(),
+        "product",
+        "description",
+        10,
+        new Price(
+            10,
+            10,
+            "EURO"));
 
-        String sameNameProduct = objectMapper.writeValueAsString(productDto);
-        mvc.perform(post("/store/product")
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
-                        .content(sameNameProduct)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
+    addProduct(owner, productDto);
 
-    private String createUser() {
-        var user = testStoreOwnerUser();
-        userRepository.save(user);
-        return user.getUsername();
-    }
+    String sameNameProduct = objectMapper.writeValueAsString(productDto);
+    mvc.perform(post("/store/product")
+            .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+            .content(sameNameProduct)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 
-    private void createStore(String owner, String storeName) throws Exception {
-        var validStoreDetails = new StoreDetails(storeName, "test",
-                new Address("test", "test", "test", "test"));
-        var body = objectMapper.writeValueAsString(validStoreDetails);
+  private String createUser() {
+    var user = testStoreOwnerUser();
+    userRepository.save(user);
+    return user.getUsername();
+  }
 
-        mvc.perform(post("/store")
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+  private void createStore(String owner, String storeName) throws Exception {
+    var validStoreDetails = new StoreDetails(storeName, "test",
+        new Address("test", "test", "test", "test"));
+    var body = objectMapper.writeValueAsString(validStoreDetails);
 
-    private void addProduct(String owner, NewProductDto newProductDto) throws Exception {
-        var body = objectMapper.writeValueAsString(newProductDto);
+    mvc.perform(post("/store")
+            .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
 
-        mvc.perform(post("/store/product")
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+  private void addProduct(String owner, NewProductDto newProductDto) throws Exception {
+    var body = objectMapper.writeValueAsString(newProductDto);
 
-    private void updateProduct(String owner, Long storeId, UpdateProductDto updateProductDto) throws Exception {
-        var body = objectMapper.writeValueAsString(updateProductDto);
+    mvc.perform(post("/store/product")
+            .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
 
-        mvc.perform(put("/store/" + storeId + "/product")
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+  private void updateProduct(String owner, Long storeId, UpdateProductDto updateProductDto)
+      throws Exception {
+    var body = objectMapper.writeValueAsString(updateProductDto);
 
-    private void updateProductStock(String owner, Long storeId, Long productId, int amount) throws Exception {
-        mvc.perform(patch("/store/" + storeId + "/product/" + productId + "?amount=" + amount)
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name()))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+    mvc.perform(put("/store/" + storeId + "/product")
+            .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+            .content(body)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
+
+  private void updateProductStock(String owner, Long storeId, Long productId, int amount)
+      throws Exception {
+    mvc.perform(patch("/store/" + storeId + "/product/" + productId + "?amount=" + amount)
+            .with(user(owner).password("test").roles(UserRole.OWNER.name()))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
 
 
-    private StoreDto[] getStoresOwnedByUser(String owner) throws Exception {
-        MvcResult mvcResult = mvc.perform(get("/store")
-                        .with(user(owner).password("test").roles(UserRole.OWNER.name())))
-                .andExpect(status().isOk())
-                .andReturn();
+  private StoreDto[] getStoresOwnedByUser(String owner) throws Exception {
+    MvcResult mvcResult = mvc.perform(get("/store")
+            .with(user(owner).password("test").roles(UserRole.OWNER.name())))
+        .andExpect(status().isOk())
+        .andReturn();
 
-        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
-    }
+    return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
+  }
 
-    private StoreDto[] getAllStores() throws Exception {
-        MvcResult mvcResult = mvc.perform(get("/store/all")
-                        .with(user("client").password("test").roles(UserRole.CLIENT.name())))
-                .andExpect(status().isOk())
-                .andReturn();
+  private StoreDto[] getAllStores() throws Exception {
+    MvcResult mvcResult = mvc.perform(get("/store/all")
+            .with(user("client").password("test").roles(UserRole.CLIENT.name())))
+        .andExpect(status().isOk())
+        .andReturn();
 
-        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
-    }
+    return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StoreDto[].class);
+  }
 
-    private ExistingProductDto[] getAllProductsInStore(Long storeId, String name) throws Exception {
-        String url = name == null ? "/store/" + storeId + "/product"
-                : "/store/" + storeId + "/product?name=" + name;
-        MvcResult mvcResult = mvc.perform(get(url)
-                        .with(user("client").password("test").roles(UserRole.CLIENT.name())))
-                .andExpect(status().isOk())
-                .andReturn();
+  private ExistingProductDto[] getAllProductsInStore(Long storeId, String name) throws Exception {
+    String url = name == null ? "/store/" + storeId + "/product"
+        : "/store/" + storeId + "/product?name=" + name;
+    MvcResult mvcResult = mvc.perform(get(url)
+            .with(user("client").password("test").roles(UserRole.CLIENT.name())))
+        .andExpect(status().isOk())
+        .andReturn();
 
-        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ExistingProductDto[].class);
-    }
+    return objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+        ExistingProductDto[].class);
+  }
 
 }

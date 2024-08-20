@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public void saveUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalStateException("There exists already a user with this name");
-        }
-
-        userRepository.save(user);
+  public void saveUser(User user) {
+    if (userRepository.existsByUsername(user.getUsername())) {
+      throw new IllegalStateException("There exists already a user with this name");
     }
+
+    userRepository.save(user);
+  }
 }
