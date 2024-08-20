@@ -2,9 +2,12 @@ package me.alex.store.core.model.value;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
@@ -12,10 +15,11 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode
 public class Price implements Serializable {
-    @NotNull
-    private Integer unit;
-    @NotNull
-    private Integer subUnit;
-    @NotBlank
-    private String currency;
+
+  @NotNull
+  private Integer unit;
+  @NotNull
+  private Integer subUnit;
+  @NotBlank
+  private String currency;
 }

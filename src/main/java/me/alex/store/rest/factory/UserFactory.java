@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserFactory {
-    private final PasswordEncoder passwordEncoder;
 
-    public User newUserFromDto(UserDto userDto, UserRole userRole) {
-        return new User(null,
-                userDto.getUsername(),
-                passwordEncoder.encode(userDto.getPassword()),
-                userRole,
-                userDto.getEmail(),
-                userDto.getPhoneNumber());
-    }
+  private final PasswordEncoder passwordEncoder;
+
+  public User newUserFromDto(UserDto userDto, UserRole userRole) {
+    return new User(null,
+        userDto.getUsername(),
+        passwordEncoder.encode(userDto.getPassword()),
+        userRole,
+        userDto.getEmail(),
+        userDto.getPhoneNumber());
+  }
 }

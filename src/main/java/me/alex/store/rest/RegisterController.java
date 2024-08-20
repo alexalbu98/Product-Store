@@ -16,22 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class RegisterController {
-    private final UserFactory userFactory;
-    private final UserService userService;
 
-    @PostMapping("/client")
-    public String registerClient(@Valid @RequestBody UserDto userDto) {
-        var user = userFactory.newUserFromDto(userDto, UserRole.CLIENT);
-        userService.saveUser(user);
+  private final UserFactory userFactory;
+  private final UserService userService;
 
-        return "Client created successfully";
-    }
+  @PostMapping("/client")
+  public String registerClient(@Valid @RequestBody UserDto userDto) {
+    var user = userFactory.newUserFromDto(userDto, UserRole.CLIENT);
+    userService.saveUser(user);
 
-    @PostMapping("/owner")
-    public String registerOwner(@Valid @RequestBody UserDto userDto) {
-        var user = userFactory.newUserFromDto(userDto, UserRole.OWNER);
-        userService.saveUser(user);
+    return "Client created successfully";
+  }
 
-        return "Store owner created successfully";
-    }
+  @PostMapping("/owner")
+  public String registerOwner(@Valid @RequestBody UserDto userDto) {
+    var user = userFactory.newUserFromDto(userDto, UserRole.OWNER);
+    userService.saveUser(user);
+
+    return "Store owner created successfully";
+  }
 }
