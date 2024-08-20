@@ -11,6 +11,7 @@ public interface UserRepository extends ListCrudRepository<User, Long> {
 
   Optional<User> findByUsername(String username);
 
-  @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM Users u WHERE u.username = :username")
+  @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END"
+      + " FROM Users u WHERE u.username = :username")
   boolean existsByUsername(String username);
 }

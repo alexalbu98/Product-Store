@@ -9,14 +9,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends ListCrudRepository<Product, Long> {
 
-  @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Products p " +
-      "WHERE p.name = :name and p.store_ref = :storeId")
+  @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Products p "
+      + "WHERE p.name = :name and p.store_ref = :storeId")
   boolean existsByNameInStore(String name, Long storeId);
 
   @Query("SELECT * FROM Products  WHERE store_ref = :storeRef")
   List<Product> findAllByStoreRef(Long storeRef);
 
-  @Query("SELECT * FROM Products " +
-      "WHERE store_ref = :storeRef and name LIKE CONCAT('%',:name,'%')")
+  @Query("SELECT * FROM Products "
+      + "WHERE store_ref = :storeRef and name LIKE CONCAT('%',:name,'%')")
   List<Product> findAllByStoreRefAndName(Long storeRef, String name);
 }
