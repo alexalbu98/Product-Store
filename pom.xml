@@ -193,6 +193,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
@@ -202,11 +203,8 @@
           <printFailingErrors>true</printFailingErrors>
           <rulesets>
             <ruleset>/category/java/bestpractices.xml</ruleset>
-            <ruleset>/category/java/design.xml</ruleset>
+            <ruleset>/category/java/codestyle.xml</ruleset>
             <ruleset>/category/java/errorprone.xml</ruleset>
-            <ruleset>/category/java/multithreading.xml</ruleset>
-            <ruleset>/category/java/performance.xml</ruleset>
-            <ruleset>/category/java/security.xml</ruleset>
           </rulesets>
         </configuration>
         <executions>
@@ -219,4 +217,25 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.2</version>
+        <configuration>
+          <rulesets>
+            <ruleset>/category/java/bestpractices.xml</ruleset>
+            <ruleset>/category/java/design.xml</ruleset>
+            <ruleset>/category/java/errorprone.xml</ruleset>
+            <ruleset>/category/java/multithreading.xml</ruleset>
+            <ruleset>/category/java/performance.xml</ruleset>
+            <ruleset>/category/java/security.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>
