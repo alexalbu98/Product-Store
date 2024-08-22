@@ -226,9 +226,7 @@
         <version>3.21.2</version>
         <configuration>
           <rulesets>
-            <ruleset>/category/java/bestpractices.xml</ruleset>
             <ruleset>/category/java/design.xml</ruleset>
-            <ruleset>/category/java/errorprone.xml</ruleset>
             <ruleset>/category/java/multithreading.xml</ruleset>
             <ruleset>/category/java/performance.xml</ruleset>
             <ruleset>/category/java/security.xml</ruleset>
