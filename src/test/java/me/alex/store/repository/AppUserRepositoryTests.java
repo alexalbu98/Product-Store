@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-class UserRepositoryTests extends AbstractContainerTest {
+class AppUserRepositoryTests extends AbstractContainerTest {
 
   @Autowired
   UserRepository userRepository;

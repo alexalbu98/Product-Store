@@ -2,9 +2,9 @@ package me.alex.store.core.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import me.alex.store.core.model.AppUser;
 import me.alex.store.core.model.Product;
 import me.alex.store.core.model.Store;
-import me.alex.store.core.model.User;
 import me.alex.store.core.model.value.Price;
 import me.alex.store.core.model.value.StoreDetails;
 import me.alex.store.core.repository.ProductRepository;
@@ -42,7 +42,8 @@ public class StoreService {
       throw new IllegalStateException("Store name already exists.");
     }
 
-    storeRepository.save(new Store(null, null, user.getId(), storeDetails));
+    var newStore = new Store(user, storeDetails);
+    storeRepository.save(newStore);
   }
 
   @Caching(cacheable = {
@@ -178,7 +179,7 @@ public class StoreService {
         .noneMatch(id -> id.equals(storeId));
   }
 
-  private User findUser(String username) {
+  private AppUser findUser(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new IllegalStateException("Username does not exist."));
   }

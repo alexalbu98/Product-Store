@@ -13,10 +13,10 @@ The app uses spring docker compose support, so the container will automatically 
 ## Description
 
 The application exposes apis for handling of multiple product stores owned by different users.  
-An user can create an account as a store owner, or as a client.  
+An appUser can create an account as a store owner, or as a client.  
 Once an account is created, a store owner can create stores and insert products into each store.  
 The app expose endpoints for store management such as add product, update product details and increment stock.  
-Every user can see the stores and the products inside, but only store owners can update their stores.
+Every appUser can see the stores and the products inside, but only store owners can update their stores.
 
 ## Technical overview
 

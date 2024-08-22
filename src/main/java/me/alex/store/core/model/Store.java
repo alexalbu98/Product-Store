@@ -26,8 +26,13 @@ public class Store implements Serializable {
   private Long id;
   @Version
   @Setter(AccessLevel.NONE)
-  private Long version = 0L;
+  private Long version;
   private Long userRef;
   @Embedded(onEmpty = USE_EMPTY)
   private StoreDetails storeDetails;
+
+  public Store(AppUser appUser, StoreDetails storeDetails) {
+    this.userRef = appUser.getId();
+    this.storeDetails = storeDetails;
+  }
 }

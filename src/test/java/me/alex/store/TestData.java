@@ -2,7 +2,7 @@ package me.alex.store;
 
 import me.alex.store.core.model.Product;
 import me.alex.store.core.model.Store;
-import me.alex.store.core.model.User;
+import me.alex.store.core.model.AppUser;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.Price;
@@ -25,8 +25,8 @@ public class TestData {
     );
   }
 
-  public static User testClientUser() {
-    return new User(null,
+  public static AppUser testClientUser() {
+    return new AppUser(null,
         "test user",
         "test user",
         UserRole.CLIENT,
@@ -35,8 +35,8 @@ public class TestData {
     );
   }
 
-  public static User testStoreOwnerUser() {
-    return new User(null,
+  public static AppUser testStoreOwnerUser() {
+    return new AppUser(null,
         "test user",
         "test user",
         UserRole.OWNER,

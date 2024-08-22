@@ -9,7 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import me.alex.store.AbstractContainerTest;
-import me.alex.store.core.model.User;
+import me.alex.store.core.model.AppUser;
 import me.alex.store.core.repository.StoreRepository;
 import me.alex.store.core.repository.UserRepository;
 import me.alex.store.core.service.StoreService;
@@ -45,28 +45,28 @@ class StoreServiceCacheTests extends AbstractContainerTest {
   @Qualifier("redisCacheManager")
   CacheManager redisCacheManager;
 
-  private User user;
+  private AppUser appUser;
 
   @BeforeEach
   void createUser() {
-    user = testStoreOwnerUser();
-    user = userRepository.save(user);
+    appUser = testStoreOwnerUser();
+    appUser = userRepository.save(appUser);
   }
 
   @Test
   @DisplayName("When a query is execute both cache layers store the data.")
   void both_caches_work() {
-    service.openProductStore(user.getUsername(), testStore(user.getId()).getStoreDetails());
+    service.openProductStore(appUser.getUsername(), testStore(appUser.getId()).getStoreDetails());
 
-    var memCacheMiss = service.findUserStores(user.getUsername());
-    var memCacheHit = service.findUserStores(user.getUsername());
+    var memCacheMiss = service.findUserStores(appUser.getUsername());
+    var memCacheHit = service.findUserStores(appUser.getUsername());
 
     verify(storeRepository, times(1)).findAllByUserRef(anyLong());
     assertThat(memCacheHit).isEqualTo(memCacheMiss);
-    assertThat(caffeineCacheManager.getCache("storeCache").get(user.getUsername()).get()).isEqualTo(
+    assertThat(caffeineCacheManager.getCache("storeCache").get(appUser.getUsername()).get()).isEqualTo(
         memCacheHit);
     var redisCacheHit = (StoreDto[]) redisCacheManager.getCache("storeCache")
-        .get(user.getUsername()).get();
+        .get(appUser.getUsername()).get();
     assertArrayEquals(redisCacheHit, memCacheHit);
   }
 }
