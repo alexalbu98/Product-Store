@@ -1,5 +1,6 @@
 package me.alex.store.core.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @Table("users")
 public class AppUser implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   private Long id;

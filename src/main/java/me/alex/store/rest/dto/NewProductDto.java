@@ -3,6 +3,7 @@ package me.alex.store.rest.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,9 @@ import me.alex.store.core.model.value.Price;
 @EqualsAndHashCode
 @ToString
 public class NewProductDto implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @NotNull
   protected Long storeId;

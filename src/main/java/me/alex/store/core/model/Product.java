@@ -2,6 +2,7 @@ package me.alex.store.core.model;
 
 import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.USE_EMPTY;
 
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,9 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table("products")
 public class Product implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @Setter(AccessLevel.NONE)

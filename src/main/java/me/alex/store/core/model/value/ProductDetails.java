@@ -3,6 +3,7 @@ package me.alex.store.core.model.value;
 import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.USE_EMPTY;
 
 import jakarta.validation.Valid;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,9 @@ import org.springframework.data.relational.core.mapping.Embedded;
 @EqualsAndHashCode
 @ToString
 public class ProductDetails implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   private String name;
   private String description;

@@ -29,11 +29,19 @@ public class StoreService {
   private final ProductRepository productRepository;
   private final UserRepository userRepository;
 
+  private static final String USERNAME_KEY = "#username";
+  private static final String CAFFEINE_CACHE_MANAGER = "caffeineCacheManager";
+  private static final String REDIS_CACHE_MANAGER = "redisCacheManager";
+  private static final String STORE_CACHE = "storeCache";
+  private static final String PRODUCT_CACHE = "productCache";
+  private static final String PRODUCT_STORE_REF = "#product.storeRef";
+  private static final String STORE_ID = "#storeId";
+
   @Caching(evict = {
-      @CacheEvict(cacheNames = "storeCache",
-          cacheManager = "caffeineCacheManager", key = "#username"),
-      @CacheEvict(cacheNames = "storeCache",
-          cacheManager = "redisCacheManager", key = "#username")
+      @CacheEvict(cacheNames = STORE_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER, key = USERNAME_KEY),
+      @CacheEvict(cacheNames = STORE_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER, key = USERNAME_KEY)
   })
   public void openProductStore(String username, StoreDetails storeDetails) {
     var user = findUser(username);
@@ -47,10 +55,10 @@ public class StoreService {
   }
 
   @Caching(cacheable = {
-      @Cacheable(cacheNames = "storeCache",
-          cacheManager = "caffeineCacheManager", key = "#username"),
-      @Cacheable(cacheNames = "storeCache",
-          cacheManager = "redisCacheManager", key = "#username")}
+      @Cacheable(cacheNames = STORE_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER, key = USERNAME_KEY),
+      @Cacheable(cacheNames = STORE_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER, key = USERNAME_KEY)}
   )
   public StoreDto[] findUserStores(String username) {
     var user = findUser(username);
@@ -63,10 +71,10 @@ public class StoreService {
   }
 
   @Caching(evict = {
-      @CacheEvict(cacheNames = "productCache",
-          cacheManager = "caffeineCacheManager", key = "#product.storeRef"),
-      @CacheEvict(cacheNames = "productCache",
-          cacheManager = "redisCacheManager", key = "#product.storeRef"),
+      @CacheEvict(cacheNames = PRODUCT_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER, key = PRODUCT_STORE_REF),
+      @CacheEvict(cacheNames = PRODUCT_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER, key = PRODUCT_STORE_REF),
   })
   public void addProductToStore(String username, Product product) {
     var user = findUser(username);
@@ -89,10 +97,10 @@ public class StoreService {
   }
 
   @Caching(cacheable = {
-      @Cacheable(cacheNames = "storeCache",
-          cacheManager = "caffeineCacheManager"),
-      @Cacheable(cacheNames = "storeCache",
-          cacheManager = "redisCacheManager")}
+      @Cacheable(cacheNames = STORE_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER),
+      @Cacheable(cacheNames = STORE_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER)}
   )
   public List<StoreDto> findAllStores() {
     return storeRepository.findAll()
@@ -102,10 +110,10 @@ public class StoreService {
   }
 
   @Caching(cacheable = {
-      @Cacheable(cacheNames = "productCache",
-          cacheManager = "caffeineCacheManager", key = "#storeId"),
-      @Cacheable(cacheNames = "productCache",
-          cacheManager = "redisCacheManager", key = "#storeId")}
+      @Cacheable(cacheNames = PRODUCT_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER, key = STORE_ID),
+      @Cacheable(cacheNames = PRODUCT_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER, key = STORE_ID)}
   )
   public List<ExistingProductDto> findAllStoreProducts(Long storeId, String name) {
     if (Strings.isBlank(name)) {
@@ -118,10 +126,10 @@ public class StoreService {
   }
 
   @Caching(evict = {
-      @CacheEvict(cacheNames = "productCache",
-          cacheManager = "caffeineCacheManager", key = "#storeId"),
-      @CacheEvict(cacheNames = "productCache",
-          cacheManager = "redisCacheManager", key = "#storeId")
+      @CacheEvict(cacheNames = PRODUCT_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER, key = STORE_ID),
+      @CacheEvict(cacheNames = PRODUCT_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER, key = STORE_ID)
   })
   public void updateProduct(String username, Long storeId, UpdateProductDto updateProductDto) {
     var user = findUser(username);
@@ -147,10 +155,10 @@ public class StoreService {
   }
 
   @Caching(evict = {
-      @CacheEvict(cacheNames = "productCache",
-          cacheManager = "caffeineCacheManager", key = "#storeId"),
-      @CacheEvict(cacheNames = "productCache",
-          cacheManager = "redisCacheManager", key = "#storeId")
+      @CacheEvict(cacheNames = PRODUCT_CACHE,
+          cacheManager = CAFFEINE_CACHE_MANAGER, key = STORE_ID),
+      @CacheEvict(cacheNames = PRODUCT_CACHE,
+          cacheManager = REDIS_CACHE_MANAGER, key = STORE_ID)
   })
   public void updateProductStock(String username, Long storeId, Long productId, Integer amount) {
     var user = findUser(username);

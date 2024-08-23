@@ -63,7 +63,8 @@ class StoreServiceCacheTests extends AbstractContainerTest {
 
     verify(storeRepository, times(1)).findAllByUserRef(anyLong());
     assertThat(memCacheHit).isEqualTo(memCacheMiss);
-    assertThat(caffeineCacheManager.getCache("storeCache").get(appUser.getUsername()).get()).isEqualTo(
+    assertThat(
+        caffeineCacheManager.getCache("storeCache").get(appUser.getUsername()).get()).isEqualTo(
         memCacheHit);
     var redisCacheHit = (StoreDto[]) redisCacheManager.getCache("storeCache")
         .get(appUser.getUsername()).get();

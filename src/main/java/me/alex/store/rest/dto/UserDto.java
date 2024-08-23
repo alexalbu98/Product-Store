@@ -1,6 +1,7 @@
 package me.alex.store.rest.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class UserDto implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @NotBlank
   private String username;

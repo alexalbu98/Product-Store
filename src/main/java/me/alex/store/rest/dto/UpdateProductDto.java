@@ -2,6 +2,7 @@ package me.alex.store.rest.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -16,6 +17,9 @@ import me.alex.store.core.model.value.ProductDetails;
 @EqualsAndHashCode
 @ToString
 public class UpdateProductDto implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @NotNull
   private Long productId;

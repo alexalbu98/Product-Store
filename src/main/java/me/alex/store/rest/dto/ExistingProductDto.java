@@ -1,5 +1,6 @@
 package me.alex.store.rest.dto;
 
+import java.io.Serial;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,6 +14,9 @@ import me.alex.store.core.model.value.Price;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class ExistingProductDto extends NewProductDto {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   protected Long productId;
 

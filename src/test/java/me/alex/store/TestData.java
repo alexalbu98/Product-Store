@@ -1,8 +1,8 @@
 package me.alex.store;
 
+import me.alex.store.core.model.AppUser;
 import me.alex.store.core.model.Product;
 import me.alex.store.core.model.Store;
-import me.alex.store.core.model.AppUser;
 import me.alex.store.core.model.UserRole;
 import me.alex.store.core.model.value.Address;
 import me.alex.store.core.model.value.Price;

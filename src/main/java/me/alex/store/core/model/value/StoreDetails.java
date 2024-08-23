@@ -5,6 +5,7 @@ import static org.springframework.data.relational.core.mapping.Embedded.OnEmpty.
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,9 @@ import org.springframework.data.relational.core.mapping.Embedded;
 @EqualsAndHashCode
 @ToString
 public class StoreDetails implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @NotBlank
   private String name;
