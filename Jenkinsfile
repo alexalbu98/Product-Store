@@ -21,7 +21,7 @@ pipeline {
                   reportName: "PMD Report"
                 ])
                 publishHTML (target: [
-                  reportDir: 'target/site/jacoco.html',
+                  reportDir: 'target/site/jacoco/jacoco.html',
                   reportFiles: 'index.html',
                   reportName: "Jacoco Report"
                 ])
