@@ -14,6 +14,17 @@ pipeline {
         stage("Static Code Analysis") {
             steps {
                 sh "./mvnw clean verify"
+                sh "./mvnw site"
+                publishHTML (target: [
+                  reportDir: 'target/site/',
+                  reportFiles: 'pmd.html',
+                  reportName: "PMD Report"
+                ])
+                publishHTML (target: [
+                  reportDir: 'target/site/jacoco.html',
+                  reportFiles: 'index.html',
+                  reportName: "Jacoco Report"
+                ])
             }
         }
         stage("Deploy") {
